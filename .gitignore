@@ -1,0 +1,9 @@
+
+//Visual Studio Files
+
+CS4223/Debug/
+Debug/
+
+*.sdf
+
+*.opensdf
