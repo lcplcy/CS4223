@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <list>
 #include <fstream>
 #include <algorithm>
 #include <thread>
@@ -17,19 +18,18 @@
 using namespace std;
 
 namespace CS4223{
-
 	class Core {
 		private:
 			Protocol::Type protocol_type;
 			string trace_file_name;
-			unsigned short num_of_processors, max_num_of_processor;
-		    unsigned int cache_size;
-			unsigned short associativity;
-			unsigned short block_size;
-			vector<unsigned int> processor_cycles; 
-			unsigned int clock;
+			unsigned short num_of_processors, 
+						   max_num_of_processor,
+						   associativity,
+						   block_size;
+		    unsigned int cache_size,
+						 clock;
 			bool isPowerOf2(unsigned int);
-			void readFile(string rel_dir,vector<Processor::Instruction*> &instructions,unsigned int &instr_count);
+			void readFile(string rel_dir,vector<Processor::Instruction*> *instructions,unsigned int *instr_count);
 			vector<CS4223::Processor::Core> processors;
 			Bus *sharedBus;
 		public:
@@ -37,6 +37,8 @@ namespace CS4223{
 			~Core();
 			void initialise();
 			void run();
+			void clean_up();
+			void analyse();
 			class ArgumentException : exception{
 				public:
 						ArgumentException(const string arg_type,const string msg) : _type(arg_type),_msg(msg) {}

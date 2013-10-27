@@ -90,26 +90,38 @@ namespace CS4223{
 		//Core setup
 		Bus *newSharedBus = new Bus();
 		vector<std::thread> threads(this->num_of_processors);
-		this->processor_cycles = vector<unsigned int>(this->num_of_processors,0);
 		this->clock = 0;
 
 		//Processor setup 
+		vector<vector<Processor::Instruction*>*> instruction_set;
+		vector<unsigned int*> all_proc_instruction_count;
+
+		vector<Processor::Instruction*> *instructions;
+		unsigned int *instruction_count;
+
 		for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
 
 			string rel_dir = "../Benchmark/"+folder_name+std::to_string(this->num_of_processors)+"/"+this->trace_file_name+ std::to_string(processor+1)+format;
 
 			cout << "Loading instructions into processor no. " + std::to_string(processor+1) << endl;
 
-			vector<Processor::Instruction*> instructions;
-			unsigned int instruction_count=0;
-			
-			threads[processor] = std::thread(&CS4223::Core::readFile,this,rel_dir,instructions,instruction_count);
+			instructions = new vector<Processor::Instruction*>();
+			instructions->clear();
+			instruction_count = new unsigned int();
+			*instruction_count = 0;
 
-			processors.push_back(CS4223::Processor::Core(instructions,instruction_count,newSharedBus));
+			instruction_set.push_back(instructions);
+			all_proc_instruction_count.push_back(instruction_count);
+			
+			threads[processor] = std::thread(&CS4223::Core::readFile,this,rel_dir,instructions,instruction_count);	
 		}
 
 		for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
+
+			//wait for all threads to complete
 			threads[processor].join();
+
+			processors.push_back(CS4223::Processor::Core(instruction_set.at(processor),*all_proc_instruction_count.at(processor),newSharedBus,this->protocol_type,this->cache_size,this->associativity,this->block_size));
 
 			if(processors[processor].initialise()){
 				throw InitialisationException("Processor","Individual processor initialisation failed");
@@ -117,21 +129,18 @@ namespace CS4223{
 		}
 	}
 
-	void Core::readFile(string rel_dir,vector<Processor::Instruction*> &instructions,unsigned int &instr_count){
+	void Core::readFile(string rel_dir,vector<Processor::Instruction*> *instructions,unsigned int *instr_count){
 		
-		ifstream fp;
+		ifstream fp(rel_dir);
 		string result = "",
 			   value = "";
 		unsigned int label=0;
-		
+		Processor::Instruction *instr_ptr = NULL;
+
 		cout << "From relative directory : " + rel_dir << endl;
 
 		try{
-			fp.open(rel_dir);
-
 			if(fp.is_open()){
-					
-
 					while (std::getline(fp, result)) {
 
 						label = std::stoi(result.substr(0, result.find(" ")));
@@ -140,47 +149,82 @@ namespace CS4223{
 						// Remove all instructions reference (ie. label == 0)
 						
 						if(label!=0){
-							Processor::Instruction *instr_ptr = new Processor::Instruction(label,value);
-						 
-							instructions.push_back(instr_ptr);
+							
+							instr_ptr = new Processor::Instruction(label,value);
+								
+							instructions->push_back(instr_ptr);
+
 						}
 
-						instr_count++;
+						*instr_count+=1;
 					}
 
-					cout << "Number of instruction loaded : " + instr_count << endl;
 			}else{
 				throw InitialisationException("FileRead","Trace file read failed");
 			}
 
 			fp.close();
 
-		}catch(exception fileEx){
-			cout << fileEx.what();
+		}catch (bad_alloc& ba)
+		{
+			cout << "bad_alloc caught: " << ba.what() << endl;
 		}
 	};
 
 	void Core::run(){
-		
-		unsigned processors_completed_execution=0;
+	    cout  << "Begin execution" << endl;
+
+		unsigned short completed_processors = 0;
 
 		while(1){
+
+			//A single clock cycle
+
 			for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
 
-				if(this->processors[processor].last_instruction()){
-					processors_completed_execution+=1;
+				this->processors[processor].next_instr(this->clock);
+
+				if(this->processors[processor].get_state()==CS4223::Processor::Core::State::complete
+				&& this->processors[processor].get_state()!=CS4223::Processor::Core::State::cleaned_up){
+
+					//Only clean up one processor once 
+					cout << "Processor no. " + std::to_string(processor) + " ended execution" << endl;
+					this->processors[processor].clean_up();
+					completed_processors+=1;
 				}
-
-				this->processors[processor].next_instr(this->clock,this->processor_cycles[processor]);
-
 			}
 
-			if(processors_completed_execution==this->num_of_processors-1){
+			if(completed_processors==this->num_of_processors){
+				// All processor completed execution
 				break;
 			}else{
+				// Inc the clock here
 				this->clock+=1;
 			}
 		}
+	}
+
+	void Core::clean_up(){
+
+		cout << "System cleanup" << endl;
+
+		unsigned int longest_instr_count=0;
+
+		for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
+
+			if(this->processors[processor].get_instr_count()>longest_instr_count){
+				longest_instr_count = this->processors[processor].get_instr_count();
+			}
+
+		}
+
+		//Add the instruction ref from the highest instruction count in any processor to the total instruction clock
+		this->clock+=longest_instr_count;
+	}
+
+	void Core::analyse(){
+		//All private members should not be changed from this point onwards
+		
 	}
 }
 
@@ -193,14 +237,15 @@ int main(int argc, char* argv[])
 
 		system.run();
 
+		system.clean_up();
+
+		system.analyse();
 	}
 	catch(CS4223::Core::ArgumentException argEx){
 		cout << argEx.getMessage();
 	}
 	catch(CS4223::Core::InitialisationException initEx){
 		cout << initEx.getMessage();
-	}catch(exception generalEx){
-		cout << generalEx.what();
 	}
 
 	return 0;
