@@ -1,3 +1,6 @@
+#ifndef PROTOCOL_H
+#define PROTOCOL_H
+
 using namespace std;
 
 /**
@@ -8,5 +11,10 @@ namespace CS4223{
 	class Protocol{
 		private:
 		public:
+			enum Type{
+				MESI,
+				DRAGON
+			};
 	};
 }
+#endif

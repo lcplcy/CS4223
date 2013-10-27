@@ -1,3 +1,5 @@
+#ifndef MESI_H
+#define MESI_H
 
 #include "..\Protocol.h"
 
@@ -15,3 +17,4 @@ namespace CS4223{
 
 	}
 }
+#endif

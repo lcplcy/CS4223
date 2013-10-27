@@ -1,3 +1,5 @@
+#ifndef DRAGON_H
+#define DRAGON_H
 
 #include "..\Protocol.h"
 
@@ -16,3 +18,4 @@ namespace CS4223{
 
 	}
 }
+#endif
