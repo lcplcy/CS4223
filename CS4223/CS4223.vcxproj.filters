@@ -19,6 +19,12 @@
     <Filter Include="Source Files\Protocols">
       <UniqueIdentifier>{831e1a3c-e2ae-43c1-bec4-8f3c1a1571f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Processor">
+      <UniqueIdentifier>{ffb1a274-9951-43c1-9231-edd160d1be87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Processor">
+      <UniqueIdentifier>{cc4f3dbe-6eee-4344-9f52-cca0a4500724}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -36,9 +42,6 @@
     <ClInclude Include="Processor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Cache.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Protocol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -51,6 +54,12 @@
     <ClInclude Include="Bus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Processor\Cache.h">
+      <Filter>Header Files\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="Processor\Instruction.h">
+      <Filter>Header Files\Processor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -62,9 +71,6 @@
     <ClCompile Include="Processor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Cache.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Protocols\MESI.cpp">
       <Filter>Source Files\Protocols</Filter>
     </ClCompile>
@@ -73,6 +79,12 @@
     </ClCompile>
     <ClCompile Include="Bus.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\Cache.cpp">
+      <Filter>Source Files\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\Instruction.cpp">
+      <Filter>Source Files\Processor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

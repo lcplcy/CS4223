@@ -41,6 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>coherence</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -80,9 +81,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bus.h" />
-    <ClInclude Include="Cache.h" />
     <ClInclude Include="CS4223.h" />
     <ClInclude Include="Processor.h" />
+    <ClInclude Include="Processor\Cache.h" />
+    <ClInclude Include="Processor\Instruction.h" />
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="Protocols\DRAGON.h" />
     <ClInclude Include="Protocols\MESI.h" />
@@ -91,9 +93,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bus.cpp" />
-    <ClCompile Include="Cache.cpp" />
     <ClCompile Include="CS4223.cpp" />
     <ClCompile Include="Processor.cpp" />
+    <ClCompile Include="Processor\Cache.cpp" />
+    <ClCompile Include="Processor\Instruction.cpp" />
     <ClCompile Include="Protocols\DRAGON.cpp" />
     <ClCompile Include="Protocols\MESI.cpp" />
     <ClCompile Include="stdafx.cpp" />
