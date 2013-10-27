@@ -3,7 +3,9 @@
 
 CS4223/Debug/
 Debug/
-
 *.sdf
-
 *.opensdf
+
+
+//Benchmark files
+/Benchmark
