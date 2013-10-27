@@ -5,6 +5,7 @@ CS4223/Debug/
 Debug/
 *.sdf
 *.opensdf
+*.vcxproj.user
 
 
 //Benchmark files
