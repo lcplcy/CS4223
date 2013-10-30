@@ -84,11 +84,11 @@ namespace CS4223{
 		}
 
 		void Core::read_from_addr(string address){
-
+			this->_protocol.ProRd(cache,_sharedBus,this->_processor_cycle, address);
 		}
 
 		void Core::write_to_addr(string address){
-
+			this->_protocol.ProRd(cache,_sharedBus,this->_processor_cycle, address);
 		}
 
 		bool Core::wait(const int clk){

@@ -13,6 +13,7 @@ namespace CS4223{
 			public:
 				MESI();
 				~MESI();
+				bool prord(Cache *cache, Bus *bus, Cycle *proc_cycle);
 		};
 
 	}
