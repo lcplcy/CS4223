@@ -14,6 +14,7 @@ namespace CS4223{
 		public:
 			Bus();
 			~Bus();
+			void set_address(string address);
 	};
 }
 #endif

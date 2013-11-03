@@ -15,6 +15,7 @@ namespace CS4223{
 				MESI,
 				DRAGON
 			};
+
 	};
 }
 #endif

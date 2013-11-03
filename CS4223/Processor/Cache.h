@@ -21,23 +21,9 @@ namespace CS4223{
 			public:
 				Cache(Bus * const sharedBus,Protocol::Type protocol_type, unsigned int size, unsigned short assoc,unsigned int blk_size);
 				~Cache();
-				bool flush(address);
-				bool write(address);
-				bool read(address);
-				class CacheException{
-					public:
-						CacheException(string arg_type,const string msg): _type(arg_type),_msg(msg) {}
-						~CacheException() {}
-						string getType(){
-							return _type;
-						}
-						string getMessage(){
-							return _type+":"+_msg;
-						}
-					private:
-						string _msg;
-						string _type;
-				};
+				bool flush(string address);
+				bool write(string address);
+				bool read(string address);
 			};
 	}
 }

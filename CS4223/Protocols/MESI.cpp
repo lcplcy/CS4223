@@ -1,6 +1,7 @@
 #include "MESI.h"
 
 CS4223::Protocols::MESI::MESI(){
+	/*
 	bool prord(Cache *cache, Bus *bus, Cycle *proc_cycle, int address){
 		//cache hit
 		if(cache.read(address)){
@@ -22,6 +23,7 @@ CS4223::Protocols::MESI::MESI(){
 		}
 
 	}
+	*/
 }
 
 CS4223::Protocols::MESI::~MESI(){

@@ -3,6 +3,7 @@
 //processor -> cache (protocol) -> bus -> protocol
 //DRAGON METHODS:
 
+/*
 <this is cache.cpp>
 
 while(not_end)
@@ -15,8 +16,6 @@ if(protocol = dragon && busUser == me)
 if(protocol = mesi && busUser == me)
 	mesi.doSomething()
 }
-
-
 
 <this is dragon.cpp>
 doSomething(string instruction, int *cycle, int *clock)//public
@@ -48,6 +47,8 @@ void busRdX()
 }
 //take in &clock, &cycle and make respective changes
 //
+
+*/
 CS4223::Protocols::DRAGON::DRAGON(){
 
 }

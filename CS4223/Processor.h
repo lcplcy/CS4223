@@ -57,7 +57,7 @@ namespace CS4223{
 									  string &value);
 					void read_from_addr(string address);
 					void write_to_addr(string address);
-					bool wait(const int clk);
+					bool wait(const unsigned int clk);
 					
 			};
 	}
