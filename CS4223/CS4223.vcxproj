@@ -86,6 +86,7 @@
     <ClInclude Include="Processor\Cache.h" />
     <ClInclude Include="Processor\Instruction.h" />
     <ClInclude Include="Protocol.h" />
+    <ClInclude Include="Protocols\BASIC.h" />
     <ClInclude Include="Protocols\DRAGON.h" />
     <ClInclude Include="Protocols\MESI.h" />
     <ClInclude Include="stdafx.h" />
@@ -97,6 +98,7 @@
     <ClCompile Include="Processor.cpp" />
     <ClCompile Include="Processor\Cache.cpp" />
     <ClCompile Include="Processor\Instruction.cpp" />
+    <ClCompile Include="Protocols\BASIC.cpp" />
     <ClCompile Include="Protocols\DRAGON.cpp" />
     <ClCompile Include="Protocols\MESI.cpp" />
     <ClCompile Include="stdafx.cpp" />

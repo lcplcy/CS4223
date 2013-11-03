@@ -2,6 +2,7 @@
 #define BUS_H
 
 #include <string>
+#include <queue>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ namespace CS4223{
 		public:
 			Bus();
 			~Bus();
-			void set_address(string address);
+			void next_transaction();
 	};
 }
 #endif

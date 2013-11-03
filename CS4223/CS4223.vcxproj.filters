@@ -60,6 +60,9 @@
     <ClInclude Include="Processor\Instruction.h">
       <Filter>Header Files\Processor</Filter>
     </ClInclude>
+    <ClInclude Include="Protocols\BASIC.h">
+      <Filter>Header Files\Protocols</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -85,6 +88,9 @@
     </ClCompile>
     <ClCompile Include="Processor\Instruction.cpp">
       <Filter>Source Files\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="Protocols\BASIC.cpp">
+      <Filter>Source Files\Protocols</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

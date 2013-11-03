@@ -3,10 +3,13 @@
 
 using namespace std;
 
-#include "Processor\Cache.h"
-#include "Processor\Instruction.h"
+#include "Processor/Cache.h"
+#include "Processor/Instruction.h"
 #include "Protocol.h"
 #include "Bus.h"
+#include "Protocols/MESI.h"
+#include "Protocols/DRAGON.h"
+#include "Protocols/BASIC.h"
 
 #include <string>
 #include <vector>
@@ -21,10 +24,12 @@ namespace CS4223{
 					unsigned int _instruction_ref_count;
 					unsigned int _data_ref_count;
 					unsigned int _cur_instruction_idx;
+					double _cache_miss_ratio;
 					Bus *const _sharedBus;
-					Cache *_cache;
-					Protocol::Type _protocol_type;
+					Cache *_L1_cache;
+					Protocol *_protocol;
 					unsigned int _processor_cycle;
+					unsigned int _wait_cycle;
 					bool last_instruction();
 				public:
 					//Constructor & Destructor
@@ -38,10 +43,10 @@ namespace CS4223{
 					~Core();
 					//Public Members
 					enum State{
-						ready,
-						executing,
-						complete,
-						cleaned_up
+						ready,			//Ready to execute instructions
+						executing,		//Executing instructions
+						complete,		//All instructions have been executed
+						cleaned_up		//Clean up and calculate metric
 					} _state;
 					//Getter & Setter 
 					unsigned int get_instr_count();
@@ -49,15 +54,15 @@ namespace CS4223{
 					Core::State get_state();
 					//Operations
 					bool initialise();
-					void next_instr(const unsigned int clk);
+					void next_instr();
 					void clean_up();
-					Instruction* fetch_next_instr();
+					Instruction* fetch_instr(unsigned int instruction_idx);
 					void decode_instr(Instruction *instr,
 						              unsigned short &label,
 									  string &value);
 					void read_from_addr(string address);
 					void write_to_addr(string address);
-					bool wait(const unsigned int clk);
+					bool wait();
 					
 			};
 	}

@@ -6,12 +6,21 @@ namespace CS4223{
 			:_instructions(instructions),_instruction_count(instruction_count),_sharedBus(sharedBus)
 		{
 			// Create a new processor with cache
+			this->_cache_miss_ratio = 0;
 			this->_data_ref_count = instructions->size();
 			this->_instruction_ref_count = _instruction_count - this->_data_ref_count;
 			this->_cur_instruction_idx = 0;
 			this->_processor_cycle = 0;
-			this->_cache = new Cache(this->_sharedBus,protocol_type,cache_size,assoc,blk_size);
-			this->_protocol_type = protocol_type;
+			this->_wait_cycle = 0;
+			this->_L1_cache = new Cache(this->_sharedBus,cache_size,assoc,blk_size);
+
+			if(protocol_type==Protocol::MESI){
+				this->_protocol = new CS4223::Protocols::MESI();
+			}else if(protocol_type==Protocol::DRAGON){
+				this->_protocol = new CS4223::Protocols::DRAGON();
+			}else if(protocol_type==Protocol::NONE){
+				this->_protocol =new CS4223::Protocols::BASIC();
+			}
 		}
 
 		Core::~Core(){
@@ -39,28 +48,42 @@ namespace CS4223{
 			return initialisation_completed;
 		}
 
-		void Core::next_instr(const unsigned int clk){
+		void Core::next_instr(){
+			
+			unsigned short label;
+			string value;
 
 			//In each clk, only one memory reference
-			if(!this->wait(clk)&&this->_state!=Core::State::cleaned_up){
-
-				unsigned short label;
-				string value;
+			if(this->_state!=Core::State::cleaned_up){
 
 				this->_state = Core::State::executing;
 
-				CS4223::Processor::Instruction *next_instr = this->fetch_next_instr();
+				CS4223::Processor::Instruction *instr_ptr = this->fetch_instr(this->_cur_instruction_idx);
 
-				this->decode_instr(next_instr,label,value);
+				this->decode_instr(instr_ptr,label,value);
 
 				switch(label){
+					case 0:
+						//Execute instructions no waits
+						this->_cur_instruction_idx+=1;
+						break;
+					//No memory reference if cache miss penalty
 					case 2:
-						this->read_from_addr(value);
+						if(!this->wait()){
+							this->read_from_addr(value);
+							this->_cur_instruction_idx+=1;
+						}
 						break;
 					case 3:
-						this->write_to_addr(value);
+						if(!this->wait()){
+							this->write_to_addr(value);	
+							this->_cur_instruction_idx+=1;
+						}
 						break;
 				}
+
+				//Always inc proc cycle
+				this->_processor_cycle+=1;
 
 				if(this->last_instruction()){
 					this->_state = Core::State::complete;
@@ -68,12 +91,9 @@ namespace CS4223{
 			}
 		}
 
-		Instruction* Core::fetch_next_instr(){
-			unsigned int instr_to_fetch = this->_cur_instruction_idx;
+		Instruction* Core::fetch_instr(unsigned int instruction_idx){
 
-			Instruction *instr_ptr = this->_instructions->at(instr_to_fetch);
-
-			this->_cur_instruction_idx+=1;
+			Instruction *instr_ptr = this->_instructions->at(instruction_idx);
 
 			return instr_ptr;
 		}
@@ -91,8 +111,9 @@ namespace CS4223{
 			//this->_protocol.ProRd(this->_cache,this->_sharedBus,this->_processor_cycle, address);
 		}
 
-		bool Core::wait(const unsigned int clk){
-			if(this->_processor_cycle>clk){
+		bool Core::wait(){
+			if(this->_wait_cycle>0){
+				this->_wait_cycle-=1;
 				return true;
 			}
 			else{
@@ -105,8 +126,8 @@ namespace CS4223{
 		}
 
 		void Core::clean_up(){
-			//Add the instruction cycle back to the processor cycle [assume each instruction cycle takes one processor cycle]
-			this->_processor_cycle+=this->_instruction_ref_count;
+
+			this->_cache_miss_ratio = this->_L1_cache->get_miss_ratio();
 
 			this->_state = Core::State::cleaned_up;
 		}

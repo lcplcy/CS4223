@@ -34,7 +34,10 @@ namespace CS4223{
 			this->protocol_type = Protocol::MESI;
 		}else if(raw_protocol_type=="DRAGON"){
 			this->protocol_type = Protocol::DRAGON;
-		}else{
+		}else if(raw_protocol_type=="NONE"){
+			this->protocol_type = Protocol::NONE;
+		}
+		else{
 			throw ArgumentException("Protocol","Input protocol not avaliable");
 		}
 
@@ -145,16 +148,10 @@ namespace CS4223{
 
 						label = std::stoi(result.substr(0, result.find(" ")));
 						value = result.substr(result.find(" "),result.length());
-
-						// Remove all instructions reference (ie. label == 0)
-						
-						if(label!=0){
-							
-							instr_ptr = new Processor::Instruction(label,value);
+	
+						instr_ptr = new Processor::Instruction(label,value);
 								
-							instructions->push_back(instr_ptr);
-
-						}
+						instructions->push_back(instr_ptr);
 
 						*instr_count+=1;
 					}
@@ -180,9 +177,11 @@ namespace CS4223{
 
 			//A single clock cycle
 
+			this->sharedBus->next_transaction();
+
 			for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
 
-				this->processors[processor].next_instr(this->clock);
+				this->processors[processor].next_instr();
 
 				if(this->processors[processor].get_state()==CS4223::Processor::Core::State::complete
 				&& this->processors[processor].get_state()!=CS4223::Processor::Core::State::cleaned_up){
@@ -208,18 +207,6 @@ namespace CS4223{
 
 		cout << "System cleanup" << endl;
 
-		unsigned int longest_instr_count=0;
-
-		for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
-
-			if(this->processors[processor].get_instr_count()>longest_instr_count){
-				longest_instr_count = this->processors[processor].get_instr_count();
-			}
-
-		}
-
-		//Add the instruction ref from the highest instruction count in any processor to the total instruction clock
-		this->clock+=longest_instr_count;
 	}
 
 	void Core::analyse(){

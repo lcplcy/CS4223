@@ -7,6 +7,6 @@ CS4223::Bus::~Bus(){
 
 }
 
-void CS4223::Bus::set_address(string address){
+void CS4223::Bus::next_transaction(){
 
 }

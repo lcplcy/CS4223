@@ -12,10 +12,10 @@ namespace CS4223{
 		private:
 		public:
 			enum Type{
+				NONE,
 				MESI,
 				DRAGON
 			};
-
 	};
 }
 #endif
