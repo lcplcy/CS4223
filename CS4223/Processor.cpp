@@ -6,21 +6,19 @@ namespace CS4223{
 			:_instructions(instructions),_instruction_count(instruction_count),_sharedBus(sharedBus)
 		{
 			// Create a new processor with cache
-			this->_cache_miss_ratio = 0;
 			this->_data_ref_count = instructions->size();
 			this->_instruction_ref_count = _instruction_count - this->_data_ref_count;
-			this->_cur_instruction_idx = 0;
-			this->_processor_cycle = 0;
-			this->_wait_cycle = 0;
+			
 			this->_L1_cache = new Cache(this->_sharedBus,cache_size,assoc,blk_size);
-
+			
 			if(protocol_type==Protocol::MESI){
 				this->_protocol = new CS4223::Protocols::MESI();
 			}else if(protocol_type==Protocol::DRAGON){
 				this->_protocol = new CS4223::Protocols::DRAGON();
 			}else if(protocol_type==Protocol::NONE){
-				this->_protocol =new CS4223::Protocols::BASIC();
+				this->_protocol =new CS4223::Protocols::BASIC(this->_L1_cache,this->_sharedBus);
 			}
+
 		}
 
 		Core::~Core(){
@@ -42,7 +40,11 @@ namespace CS4223{
 
 		bool Core::initialise(){
 			bool initialisation_completed = false;
-			
+		
+			this->_cache_miss_ratio = 0;
+			this->_cur_instruction_idx = 0;
+			this->_processor_cycle = 0;
+			this->_wait_cycle = 0;
 			this->_state = Core::State::ready;
 
 			return initialisation_completed;
@@ -104,11 +106,11 @@ namespace CS4223{
 		}
 
 		void Core::read_from_addr(string address){
-			//this->_protocol.ProRd(this->_cache,this->_sharedBus,this->_processor_cycle, address);
+			this->_protocol->ProRd(address,&this->_wait_cycle);
 		}
 
 		void Core::write_to_addr(string address){
-			//this->_protocol.ProRd(this->_cache,this->_sharedBus,this->_processor_cycle, address);
+			this->_protocol->ProWr(address,&this->_wait_cycle);
 		}
 
 		bool Core::wait(){
