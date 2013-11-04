@@ -1,4 +1,30 @@
 #include "DRAGON.h"
+
+
+
+namespace CS4223{
+	namespace Protocols{
+		DRAGON::DRAGON(){
+
+		}
+
+		DRAGON::~DRAGON(){
+
+		}
+
+		bool DRAGON::ProRd(string address,unsigned int *wait_cycle){
+			bool success = false;
+
+			return success;
+		}
+
+		bool DRAGON::ProWr(string address,unsigned int *wait_cycle){
+			bool success = false;
+
+			return success;
+		}
+	}
+}
 //init - Initialize an array to keep track of the states of each cache byte
 //processor -> cache (protocol) -> bus -> protocol
 //DRAGON METHODS:
@@ -49,10 +75,3 @@ void busRdX()
 //
 
 */
-CS4223::Protocols::DRAGON::DRAGON(){
-
-}
-
-CS4223::Protocols::DRAGON::~DRAGON(){
-
-}

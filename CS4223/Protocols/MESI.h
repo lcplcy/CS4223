@@ -13,6 +13,8 @@ namespace CS4223{
 			public:
 				MESI();
 				~MESI();
+				bool ProRd(string address,unsigned int *wait_cycle);
+				bool ProWr(string address,unsigned int *wait_cycle);
 				/*
 					bool prord(Cache *cache, Bus *bus, Cycle *proc_cycle);
 				*/

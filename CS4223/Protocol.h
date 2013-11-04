@@ -1,6 +1,8 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
+#include <string>
+
 using namespace std;
 
 /**
@@ -16,6 +18,13 @@ namespace CS4223{
 				MESI,
 				DRAGON
 			};
+			class State{
+				public:
+					State(){
+					};
+			};
+			virtual bool ProRd(string address,unsigned int *wait_cycle)=0;
+			virtual bool ProWr(string address,unsigned int *wait_cycle)=0;
 	};
 }
 #endif
