@@ -64,6 +64,7 @@ namespace CS4223{
 
 	Core::~Core(){
 		 cout << "System shutdown" << endl;
+
 	}
 
 	bool Core::isPowerOf2(unsigned int num){
@@ -91,7 +92,7 @@ namespace CS4223{
 		folder_name[0] = toupper(folder_name[0]);
 
 		//Core setup
-		Bus *newSharedBus = new Bus();
+		this->sharedBus = new Bus();
 		vector<std::thread> threads(this->num_of_processors);
 		this->clock = 0;
 
@@ -124,7 +125,7 @@ namespace CS4223{
 			//wait for all threads to complete
 			threads[processor].join();
 
-			processors.push_back(CS4223::Processor::Core(instruction_set.at(processor),*all_proc_instruction_count.at(processor),newSharedBus,this->protocol_type,this->cache_size,this->associativity,this->block_size));
+			processors.push_back(CS4223::Processor::Core(instruction_set.at(processor),*all_proc_instruction_count.at(processor),this->sharedBus,this->protocol_type,this->cache_size,this->associativity,this->block_size));
 
 			if(processors[processor].initialise()){
 				throw InitialisationException("Processor","Individual processor initialisation failed");
@@ -177,8 +178,6 @@ namespace CS4223{
 
 			//A single clock cycle
 
-			this->sharedBus->next_transaction();
-
 			for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
 
 				this->processors[processor].next_instr();
@@ -192,6 +191,8 @@ namespace CS4223{
 					completed_processors+=1;
 				}
 			}
+
+			this->sharedBus->next_transaction();
 
 			if(completed_processors==this->num_of_processors){
 				// All processor completed execution
