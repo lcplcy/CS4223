@@ -4,6 +4,8 @@
 #include <string>
 #include <queue>
 
+#include "Processor\Transaction.h"
+
 using namespace std;
 
 namespace CS4223{
@@ -11,10 +13,11 @@ namespace CS4223{
 	class Bus{
 		private:
 			bool S;
-			string address;
+			queue<CS4223::Processor::Transaction> *bus_queue;
 		public:
 			Bus();
 			~Bus();
+			void add_transaction(CS4223::Processor::Transaction new_transaction);
 			void next_transaction();
 	};
 }
