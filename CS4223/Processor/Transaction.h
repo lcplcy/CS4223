@@ -9,8 +9,10 @@ namespace CS4223{
 	namespace Processor{
 		class Transaction{
 			private:
+				string _address;
 			public:
 				Transaction(string address);
+				string Transaction::get_address();
 		};
 	}
 }

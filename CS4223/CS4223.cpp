@@ -156,7 +156,6 @@ namespace CS4223{
 
 						*instr_count+=1;
 					}
-
 			}else{
 				throw InitialisationException("FileRead","Trace file read failed");
 			}
@@ -176,11 +175,17 @@ namespace CS4223{
 
 		while(1){
 
+			CS4223::Processor::Transaction *bus_transaction = NULL; 
+
 			//A single clock cycle
 
 			for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
 
 				this->processors[processor].next_instr();
+
+				if(bus_transaction!=NULL){
+					this->processors[processor].listen(bus_transaction->get_address());
+				}
 
 				if(this->processors[processor].get_state()==CS4223::Processor::Core::State::complete
 				&& this->processors[processor].get_state()!=CS4223::Processor::Core::State::cleaned_up){
@@ -192,10 +197,24 @@ namespace CS4223{
 				}
 			}
 
-			this->sharedBus->next_transaction();
+			bus_transaction = this->sharedBus->next_transaction();
 
 			if(completed_processors==this->num_of_processors){
 				// All processor completed execution
+
+				// Complete all the bus transactions
+				while(1){
+					CS4223::Processor::Transaction *bus_transaction = this->sharedBus->next_transaction();
+
+					if(bus_transaction==NULL){
+						break;
+					}
+				
+					for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
+						this->processors[processor].listen(bus_transaction->get_address());
+					}
+				}
+
 				break;
 			}else{
 				// Inc the clock here
@@ -212,7 +231,33 @@ namespace CS4223{
 
 	void Core::analyse(){
 		//All private members should not be changed from this point onwards
+		cout << "1. Data Cache Miss Ratio " << endl;
+
+		for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
+			double miss_ratio  = this->processors[processor].get_cache_miss_ratio();
+			cout << "Processor" << "[" << processor << "]" << " : " << miss_ratio << endl;
+		}
+
+		cout << "2. Address & Data Traffic " << endl;
 		
+		double total_address = this->sharedBus->get_total_address_traffic();
+		double total_data = this->sharedBus->get_total_data_traffic();
+
+		for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
+			
+			double address_per_cache_access  = (double) total_address/this->processors[processor].get_total_cache_access();
+			cout << "Processor Address" << "[" << processor << "]" << " : " <<  address_per_cache_access << endl;
+
+			double data_per_cache_access  = (double) total_data/this->processors[processor].get_total_cache_access();
+			cout << "Processor Data" << "["  << processor << "]" << " : " <<  data_per_cache_access << endl;
+		}
+
+		cout << "3. Execution Cycles" << endl;
+
+		for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
+			
+			cout << "Processor Cycles" << "[" << processor << "]" << ":" << this->processors[processor].get_processor_execution_cycles() << endl;
+		}
 	}
 }
 
@@ -235,6 +280,8 @@ int main(int argc, char* argv[])
 	catch(CS4223::Core::InitialisationException initEx){
 		cout << initEx.getMessage();
 	}
+
+	system("pause");
 
 	return 0;
 }

@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 #include <stdlib.h>
+#include <bitset>
 
 #include "../Bus.h"
 #include "../Protocol.h"
@@ -20,18 +21,14 @@ namespace CS4223{
 				unsigned int _size;
 				unsigned int _blk_size;
 				unsigned short _assoc;
-				unsigned int _cache_sets;
+				unsigned int _num_of_cache_sets;
 				unsigned int _num_of_blks;
-
-				unsigned short _memory_addr_len_bits;
-				unsigned short _N_offset_len_bits;
-				unsigned short _M_cache_set_len_bits;
-				unsigned short _tag_len_bits;
+				unsigned int _num_of_words;
 				unsigned short _word_size_bytes;
 
 				//Analytics
+				unsigned int _cache_access;
 				unsigned int _hit;
-				unsigned int _mem_access;
 
 				class Block{
 					private:
@@ -39,10 +36,8 @@ namespace CS4223{
 						bool Valid;
 						bool Dirty;
 						string Tag;
-						Protocol::State *_state;
 					public:
-						Block(unsigned int size, Protocol::State *state): _size(size){
-							this->_state = state;
+						Block(unsigned int size): _size(size){
 							this->Valid = false;
 							this->Dirty = false;
 							this->Tag = "";
@@ -67,23 +62,25 @@ namespace CS4223{
 						}
 				};
 
+				struct Address{
+					string tag;
+					unsigned int cache_set_idx;
+					unsigned int offset;
+				};
+
 				vector<vector<Block>> *_cache;
 
-				string conHexToBin(string hex);
-				unsigned int conBinToUInt(string bin);
-				unsigned short powerOf2(unsigned int num);
-
-				string extractTag(string hex);
-				unsigned int extractCacheSetIdx(string hex);
-				unsigned int extractOffset(string hex);
-
+				string Cache::conHexToBin(string hex);
+				double Cache::string_to_double(string bin);
+				unsigned short Cache::powerOf2(unsigned int num);
 			public:
-				Cache(Bus *bus, unsigned int size, unsigned short assoc,unsigned int blk_size);
+				Cache(Bus *sharedBus, unsigned int size,unsigned short assoc,unsigned int blk_size);
 				~Cache();
 				bool read(string address);
-				void fetch(string address);
 				void write(string address);
+				Address translate_address(string raw_address);
 				double get_miss_ratio();
+				unsigned int get_total_cache_access();
 			};
 	}
 }

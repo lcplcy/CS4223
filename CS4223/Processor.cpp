@@ -8,16 +8,24 @@ namespace CS4223{
 			// Create a new processor with cache
 			this->_data_ref_count = instructions->size();
 			this->_instruction_ref_count = _instruction_count - this->_data_ref_count;
-			
+
+			unsigned short address_in_bytes_for_each_transaction = 4;
+			unsigned short data_in_bytes_for_each_transaction;
+
 			this->_L1_cache = new Cache(this->_sharedBus,cache_size,assoc,blk_size);
-			
+
 			if(protocol_type==Protocol::MESI){
 				this->_protocol = new CS4223::Protocols::MESI();
+				data_in_bytes_for_each_transaction = blk_size;
 			}else if(protocol_type==Protocol::DRAGON){
 				this->_protocol = new CS4223::Protocols::DRAGON();
+				data_in_bytes_for_each_transaction = 2; //One word per transaction
 			}else if(protocol_type==Protocol::NONE){
-				this->_protocol =new CS4223::Protocols::BASIC(this->_L1_cache,this->_sharedBus);
+				this->_protocol = new CS4223::Protocols::BASIC(this->_L1_cache,this->_sharedBus);
+				data_in_bytes_for_each_transaction = blk_size;
 			}
+
+			this->_sharedBus->set_bytes_per_transaction(address_in_bytes_for_each_transaction,data_in_bytes_for_each_transaction);
 
 		}
 
@@ -26,7 +34,6 @@ namespace CS4223{
 		}
 
 		unsigned int Core::get_instr_count(){
-
 			return this->_instruction_ref_count;
 		}
 
@@ -113,6 +120,10 @@ namespace CS4223{
 			this->_protocol->ProWr(address,&this->_wait_cycle);
 		}
 
+		void Core::listen(string address){
+
+		}
+
 		bool Core::wait(){
 			if(this->_wait_cycle>0){
 				this->_wait_cycle-=1;
@@ -132,6 +143,18 @@ namespace CS4223{
 			this->_cache_miss_ratio = this->_L1_cache->get_miss_ratio();
 
 			this->_state = Core::State::cleaned_up;
+		}
+
+		double Core::get_cache_miss_ratio(){
+			return this->_cache_miss_ratio;
+		}
+
+		double Core::get_total_cache_access(){
+			return this->_L1_cache->get_total_cache_access();
+		}
+
+		unsigned int Core::get_processor_execution_cycles(){
+			return this->_processor_cycle;
 		}
 	}
 }

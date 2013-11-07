@@ -62,8 +62,12 @@ namespace CS4223{
 									  string &value);
 					void read_from_addr(string address);
 					void write_to_addr(string address);
+					void listen(string address);
 					bool wait();
-					
+					//Analytics
+					double get_cache_miss_ratio();
+					double get_total_cache_access();
+					unsigned int get_processor_execution_cycles(); 
 			};
 	}
 }

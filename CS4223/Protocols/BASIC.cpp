@@ -20,13 +20,9 @@ namespace CS4223{
 
 			//Cache will return hit or miss
 			if(this->_cache->read(address)){
-
+				//Cache Hit
 			}else{
-
-				//Send transaction on the bus
-				CS4223::Processor::Transaction new_transaction(address);
-				this->_sharedBus->add_transaction(new_transaction);
-				this->_cache->fetch(address);
+				//Cache Miss
 
 				//Miss => access memory add 10 to processor cycle
 				*wait_cycle+=10;	
