@@ -12,16 +12,11 @@ namespace CS4223{
 
 		}
 
-		bool DRAGON::ProRd(string address,unsigned int *wait_cycle){
-			bool success = false;
+		void DRAGON::ProRd(string address,unsigned int *wait_cycle){
 
-			return success;
 		}
 
-		bool DRAGON::ProWr(string address,unsigned int *wait_cycle){
-			bool success = false;
-
-			return success;
+		void DRAGON::ProWr(string address,unsigned int *wait_cycle){
 		}
 	}
 }

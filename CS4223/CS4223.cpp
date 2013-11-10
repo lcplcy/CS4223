@@ -204,6 +204,9 @@ namespace CS4223{
 
 				// Complete all the bus transactions
 				while(1){
+
+					this->clock+=1;
+
 					CS4223::Processor::Transaction *bus_transaction = this->sharedBus->next_transaction();
 
 					if(bus_transaction==NULL){
@@ -230,12 +233,19 @@ namespace CS4223{
 	}
 
 	void Core::analyse(){
+
+		cout << "Total Number of Clk Cycle : " << this->clock << endl;
+
 		//All private members should not be changed from this point onwards
 		cout << "1. Data Cache Miss Ratio " << endl;
 
 		for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
 			double miss_ratio  = this->processors[processor].get_cache_miss_ratio();
-			cout << "Processor" << "[" << processor << "]" << " : " << miss_ratio << endl;
+			unsigned int hit = this->processors[processor].get_total_cache_hit();
+			unsigned int access = this->processors[processor].get_total_cache_access();
+			cout << "Processor" << " [" << processor << "]" << " Miss Ratio : " << miss_ratio << endl;
+			cout << "Processor" << " [" << processor << "]" << " Cache Hit : " << hit  << endl;
+			cout << "Processor" << " [" << processor << "]" << " Total Access : " << access  << endl;
 		}
 
 		cout << "2. Address & Data Traffic " << endl;

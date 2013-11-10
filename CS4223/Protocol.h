@@ -18,13 +18,9 @@ namespace CS4223{
 				MESI,
 				DRAGON
 			};
-			class State{
-				public:
-					State(){
-					};
-			};
-			virtual bool ProRd(string address,unsigned int *wait_cycle)=0;
-			virtual bool ProWr(string address,unsigned int *wait_cycle)=0;
+			
+			virtual void ProRd(string address,unsigned int *wait_cycle)=0;
+			virtual void ProWr(string address,unsigned int *wait_cycle)=0;
 	};
 }
 #endif
