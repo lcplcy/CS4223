@@ -38,9 +38,13 @@ namespace CS4223{
 						string Tag;
 					public:
 						Block(unsigned int size): _size(size){
+							//MESI
 							this->Valid = false;
+							//DRAGON
 							this->Dirty = false;
+							//I assume TAG is to indicate cache block state?
 							this->Tag = "";
+							this->State = "";
 						}
 						void set_valid(bool valid){
 							this->Valid=valid;
@@ -59,6 +63,13 @@ namespace CS4223{
 						}
 						string get_tag(){
 							return this->Tag;
+						}
+
+						void set_state(string state){
+							this->State = state;
+						}
+						string get_state(){
+							return this->State;
 						}
 				};
 

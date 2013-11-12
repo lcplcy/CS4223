@@ -129,13 +129,14 @@ namespace CS4223{
 			for(unsigned int sets=0;sets<cacheSet.size();sets++){
 
 				//A Hit
-				if(translated_address.tag==cacheSet[sets].get_tag()&&cacheSet[sets].get_valid()==true){
+				if(translated_address.tag==cacheSet[sets].get_tag() && cacheSet[sets].get_valid()==true){
 					miss=false;
 					//No Bus Transaction
 				}
 
 			}
 
+            //not miss -> READ HIT
 			if(!miss){
 				this->_hit+=1;
 			}else{
@@ -184,6 +185,7 @@ namespace CS4223{
 					miss=false;
 					//No Bus Transaction
 					scanningBlk->set_dirty(true);
+                    scanningBlk->set_state("M")
 
 					break;
 				}
