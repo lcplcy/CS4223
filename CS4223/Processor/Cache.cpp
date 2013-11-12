@@ -15,10 +15,15 @@ namespace CS4223{
 			this->_num_of_words = this->_blk_size/this->_word_size_bytes;
 			this->_num_of_blks = this->_size/this->_blk_size;
 			this->_num_of_cache_sets = this->_num_of_blks/this->_assoc;
+
+			//Initialised Cache Metric
+
+			this->_cache_access = 0;
+			this->_hit=0;
 			
 			vector<Block> cache_set(this->_assoc,Block(this->_blk_size));
 
-			this->_cache = new vector<vector<Block>>(_num_of_cache_sets,cache_set);
+			this->_cache = new vector<vector<Block>>(this->_num_of_cache_sets,cache_set);
 		}
 
 		Cache::~Cache(){
@@ -115,111 +120,36 @@ namespace CS4223{
 			return (double) misses/this->_cache_access;
 		}
 
-		/* Operations */
-
-		bool Cache::read(string address){
-
-			this->_cache_access+=1;
-
-			//Extract block identifier
-			Cache::Address translated_address = this->translate_address(address);
-			vector<Block> cacheSet = this->_cache->at((unsigned int)translated_address.cache_set_idx);
-			bool miss=true;
-
-			for(unsigned int sets=0;sets<cacheSet.size();sets++){
-
-				//A Hit
-				if(translated_address.tag==cacheSet[sets].get_tag() && cacheSet[sets].get_valid()==true){
-					miss=false;
-					//No Bus Transaction
-				}
-
-			}
-
-            //not miss -> READ HIT
-			if(!miss){
-				this->_hit+=1;
-			}else{
-				//Read cache blk from memory via the bus
-				CS4223::Processor::Transaction new_transaction(address);
-				this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
-
-				//Extract block identifier
-				Cache::Address translated_address = this->translate_address(address);
-				vector<Block> *cacheSet = &this->_cache->at(translated_address.cache_set_idx);
-			
-				//Random Replacement 
-				unsigned int random_blk_idx = rand()%cacheSet->size()+0;
-				Block *selectedBlk = &cacheSet->at(random_blk_idx);
-			
-				if(selectedBlk->get_dirty()){
-					//if the block is dirty flush to memory => Assume free due to write buffer
-					Transaction new_transaction(address);
-					this->_sharedBus->add_transaction(Bus::Type::BusWr,new_transaction);
-				}
-
-				//Write Allocate to the Cache Block
-				selectedBlk->set_tag(translated_address.tag);
-				selectedBlk->set_valid(true);
-				selectedBlk->set_dirty(false);
-			}
-
-			return !miss;
-		}
-
-		void Cache::write(string address){
-
-			this->_cache_access+=1;
-
-			//Extract block identifier
-			Cache::Address translated_address = this->translate_address(address);
-			vector<Block> *cacheSet = &this->_cache->at((unsigned int)translated_address.cache_set_idx);
-			bool miss=true;
-
-			for(unsigned int sets=0;sets<cacheSet->size();sets++){
-
-				Block *scanningBlk = &cacheSet->at(sets);
-
-				//A Write Hit
-				if(translated_address.tag==scanningBlk->get_tag()&&scanningBlk->get_valid()==true){
-					miss=false;
-					//No Bus Transaction
-					scanningBlk->set_dirty(true);
-                    scanningBlk->set_state("M")
-
-					break;
-				}
-			}
-
-			//Write Miss
-			if(miss){
-				//Read cache blk from memory via the bus
-				CS4223::Processor::Transaction new_transaction(address);
-				this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
-
-				//Extract block identifier
-				Cache::Address translated_address = this->translate_address(address);
-				vector<Block> *cacheSet = &this->_cache->at(translated_address.cache_set_idx);
-			
-				//Random Replacement 
-				unsigned int random_blk_idx = rand()%cacheSet->size()+0;
-				Block *selectedBlk = &cacheSet->at(random_blk_idx);
-			
-				if(selectedBlk->get_dirty()){
-					//if the block is dirty flush to memory => Assume free due to write buffer
-					Transaction new_transaction(address);
-					this->_sharedBus->add_transaction(Bus::Type::BusWr,new_transaction);
-				}
-
-				//Write Allocate to the Cache Block
-				selectedBlk->set_tag(translated_address.tag);
-				selectedBlk->set_valid(true);
-				selectedBlk->set_dirty(true);	//Because you wrote the data into this cache block
-			}
+		unsigned int Cache::get_total_cache_hit(){
+			return this->_hit;
 		}
 
 		unsigned int Cache::get_total_cache_access(){
 			return this->_cache_access;
+		}
+
+		/* Operations */
+
+		vector<Block>* Cache::get_cache_set(unsigned int cache_set_idx){
+			return &this->_cache->at(cache_set_idx);
+		}
+
+
+		void Cache::inc_cache_access(){
+			 this->_cache_access+=1;	
+		}
+		
+		void Cache::inc_hit(){
+			 this->_hit+=1;
+		}
+
+
+		unsigned short Cache::get_associativity(){
+			return this->_assoc;
+		}
+
+		unsigned int Cache::get_num_of_cache_sets(){
+			return this->_num_of_cache_sets;
 		}
 	}
 }

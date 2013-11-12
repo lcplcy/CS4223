@@ -13,8 +13,8 @@ namespace CS4223{
 			public:
 				DRAGON();
 				~DRAGON();
-				bool ProRd(string address,unsigned int *wait_cycle);
-				bool ProWr(string address,unsigned int *wait_cycle);
+				void ProRd(string address,unsigned int *wait_cycle);
+				void ProWr(string address,unsigned int *wait_cycle);
 		};
 
 	}

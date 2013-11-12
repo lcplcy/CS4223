@@ -15,18 +15,17 @@ namespace CS4223{
 			this->_L1_cache = new Cache(this->_sharedBus,cache_size,assoc,blk_size);
 
 			if(protocol_type==Protocol::MESI){
-				this->_protocol = new CS4223::Protocols::MESI();
+				this->_protocol = new CS4223::Protocols::MESI(this->_L1_cache,this->_sharedBus);
 				data_in_bytes_for_each_transaction = blk_size;
 			}else if(protocol_type==Protocol::DRAGON){
 				this->_protocol = new CS4223::Protocols::DRAGON();
-				data_in_bytes_for_each_transaction = 2; //One word per transaction
+				data_in_bytes_for_each_transaction = 2; //One word per transaction because it is an update protocol
 			}else if(protocol_type==Protocol::NONE){
 				this->_protocol = new CS4223::Protocols::BASIC(this->_L1_cache,this->_sharedBus);
 				data_in_bytes_for_each_transaction = blk_size;
 			}
 
 			this->_sharedBus->set_bytes_per_transaction(address_in_bytes_for_each_transaction,data_in_bytes_for_each_transaction);
-
 		}
 
 		Core::~Core(){
@@ -99,7 +98,7 @@ namespace CS4223{
 				}
 			}
 		}
-
+		 
 		Instruction* Core::fetch_instr(unsigned int instruction_idx){
 
 			Instruction *instr_ptr = this->_instructions->at(instruction_idx);
@@ -151,6 +150,10 @@ namespace CS4223{
 
 		double Core::get_total_cache_access(){
 			return this->_L1_cache->get_total_cache_access();
+		}
+
+		double Core::get_total_cache_hit(){
+			return this->_L1_cache->get_total_cache_hit();
 		}
 
 		unsigned int Core::get_processor_execution_cycles(){

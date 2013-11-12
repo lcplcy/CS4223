@@ -67,6 +67,7 @@ namespace CS4223{
 					//Analytics
 					double get_cache_miss_ratio();
 					double get_total_cache_access();
+					double Core::get_total_cache_hit();
 					unsigned int get_processor_execution_cycles(); 
 			};
 	}

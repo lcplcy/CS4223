@@ -9,6 +9,7 @@
 #include "../Bus.h"
 #include "../Protocol.h"
 #include "Transaction.h"
+#include "Block.h"
 
 using namespace std;
 
@@ -87,11 +88,21 @@ namespace CS4223{
 			public:
 				Cache(Bus *sharedBus, unsigned int size,unsigned short assoc,unsigned int blk_size);
 				~Cache();
-				bool read(string address);
-				void write(string address);
+				
+				struct Address{
+					string tag;
+					unsigned int cache_set_idx;
+					unsigned int offset;
+				};
+				vector<Block>* get_cache_set(unsigned int cache_set_idx);
 				Address translate_address(string raw_address);
 				double get_miss_ratio();
+				unsigned int get_total_cache_hit();
 				unsigned int get_total_cache_access();
+				unsigned short Cache::get_associativity();
+				unsigned int Cache::get_num_of_cache_sets();
+				void inc_cache_access();
+				void inc_hit();
 			};
 	}
 }

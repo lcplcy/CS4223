@@ -65,25 +65,25 @@ namespace CS4223{
 
 		private bool DRAGON::PrRd(unsigned int* cycle, unsigned int* clock){
 			bool success = false;
-
 			return success;
 		}
 
 		private bool DRAGON::PrWr(unsigned int* cycle, unsigned int* clock){
 			bool success = false;
-
-			return success;
 		}
+		
+		void DRAGON::ProRd(string address,unsigned int *wait_cycle){}
 
 		private bool DRAGON::BusRd(unsigned int* cycle, unsigned int* clock){
 			bool success = false;
-
 			return success;
 		}
+		
+		void DRAGON::ProWr(string address,unsigned int *wait_cycle){}
 
+		
 		private bool DRAGON::BusRdX(unsigned int* cycle, unsigned int* clock){
 			bool success = false;
-
 			return success;
 		}
 

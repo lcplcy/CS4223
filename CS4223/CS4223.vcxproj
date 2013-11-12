@@ -83,6 +83,7 @@
     <ClInclude Include="Bus.h" />
     <ClInclude Include="CS4223.h" />
     <ClInclude Include="Processor.h" />
+    <ClInclude Include="Processor\Block.h" />
     <ClInclude Include="Processor\Cache.h" />
     <ClInclude Include="Processor\Instruction.h" />
     <ClInclude Include="Processor\Transaction.h" />
@@ -97,6 +98,7 @@
     <ClCompile Include="Bus.cpp" />
     <ClCompile Include="CS4223.cpp" />
     <ClCompile Include="Processor.cpp" />
+    <ClCompile Include="Processor\Block.cpp" />
     <ClCompile Include="Processor\Cache.cpp" />
     <ClCompile Include="Processor\Instruction.cpp" />
     <ClCompile Include="Processor\Transaction.cpp" />
