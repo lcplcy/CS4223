@@ -38,9 +38,7 @@ namespace CS4223{
 		//In E, if this cache's processor Write, NewState = M
 		//In E, if another cache request via BusRd, NewState = Sc
 
-		//From this cache's processor, if Read Miss,
-		//From bus, other cache has it,
-		//State: Sc
+		
 
 		
 		//In Sc, if this cache's processor Write, NewState = Sm, Do bus update to change other Sm to Sc.
@@ -49,7 +47,7 @@ namespace CS4223{
 		//In Sc, if another cache does a BusUpdate, remain in Sc
 		//===CY DRAGON TODO===
 
-		private bool DRAGON::PrRd(unsigned int* cycle, unsigned int* clock){
+		void DRAGON::ProRd(string address,unsigned int *wait_cycle){
 			bool miss = true;
 			this->_cache->inc_cache_access();
 
@@ -78,8 +76,26 @@ namespace CS4223{
 				//No change in DRAGON STATE.
 			}else{
 				//Cache Miss
-				//Check if other cache's have it, if not fetch from memory
-				if(other cache has it){
+				//Check if other cache's have it via bus, if not fetch from memory
+				
+				//Fetch Cache Block from Memory
+				CS4223::Processor::Transaction new_transaction(address);
+				this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
+
+				//Random Replacement at the cache set
+				unsigned int random_blk_idx = rand()%cacheSet->size()+0;
+				Processor::Block *selectedBlk = &cacheSet->at(random_blk_idx);
+				DRAGON::State *selectedState = &cacheStateSet->at(random_blk_idx);
+
+				if(this->_sharedBus->assert_shared_line >= 0){
+					//From this cache's processor, if Read Miss,
+					//From bus, other cache has it,
+					//State: Sc
+					//Other cache's have the memory requested, take from them instead.
+					*wait_cycle+=1;
+					selectedBlk->set_tag(translated_address.tag);
+					selectedState->set_dragonstate("Sc");
+
 
 				}else{
 					//If Read Miss, take from memory, and change state to E
@@ -89,15 +105,6 @@ namespace CS4223{
 
 					//Miss => access memory add 10 to processor cycle
 					*wait_cycle+=10;
-
-					//Fetch Cache Block from Memory
-					CS4223::Processor::Transaction new_transaction(address);
-					this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
-
-					//Random Replacement at the cache set
-					unsigned int random_blk_idx = rand()%cacheSet->size()+0;
-					Processor::Block *selectedBlk = &cacheSet->at(random_blk_idx);
-					DRAGON::State *selectedState = &cacheStateSet->at(random_blk_idx);
 
 					/*What is get_dirty() in BASIC?
 					if(selectedState->get_dirty()){
@@ -109,27 +116,6 @@ namespace CS4223{
 				}
 			}
 		}
-
-
-		private bool DRAGON::PrWr(unsigned int* cycle, unsigned int* clock){
-			bool success = false;
-		}
-		
-		void DRAGON::ProRd(string address,unsigned int *wait_cycle){}
-
-		private bool DRAGON::BusRd(unsigned int* cycle, unsigned int* clock){
-			bool success = false;
-			return success;
-		}
-		
-		void DRAGON::ProWr(string address,unsigned int *wait_cycle){}
-
-		
-		private bool DRAGON::BusRdX(unsigned int* cycle, unsigned int* clock){
-			bool success = false;
-			return success;
-		}
-
 
 	}
 }

@@ -19,7 +19,7 @@ namespace CS4223{
 			double _total_address_traffic;
 			double _total_data_traffic;
 			//DRAGON
-			bool shared_line;
+			int shared_line;
 			//If read miss, other cache will use this shared_line to indicate that they have
 			//the data, and pass the data to the requesting cache.
 			//If write hit, and if other cache assert the shared_line to indicate they also have
@@ -42,6 +42,9 @@ namespace CS4223{
 			CS4223::Processor::Transaction* next_transaction();
 			double get_total_address_traffic();
 			double get_total_data_traffic();
+			//If a cache has a memory address that is being requested via BusRd, assert the shared line and
+			//return the respective cache that has the memory address.
+			void assert_shared_line();
 	};
 }
 #endif
