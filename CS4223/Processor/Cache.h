@@ -31,55 +31,6 @@ namespace CS4223{
 				unsigned int _cache_access;
 				unsigned int _hit;
 
-				class Block{
-					private:
-						unsigned int _size;
-						bool Valid;
-						bool Dirty;
-						string Tag;
-					public:
-						Block(unsigned int size): _size(size){
-							//MESI
-							this->Valid = false;
-							//DRAGON
-							this->Dirty = false;
-							//I assume TAG is to indicate cache block state?
-							this->Tag = "";
-							this->State = "";
-						}
-						void set_valid(bool valid){
-							this->Valid=valid;
-						}
-						bool get_valid(){
-							return this->Valid;
-						}
-						void set_dirty(bool dirty){
-							this->Dirty = dirty;
-						}
-						bool get_dirty(){
-							return this->Dirty;
-						}
-						void set_tag(string tag){
-							this->Tag = tag;
-						}
-						string get_tag(){
-							return this->Tag;
-						}
-
-						void set_state(string state){
-							this->State = state;
-						}
-						string get_state(){
-							return this->State;
-						}
-				};
-
-				struct Address{
-					string tag;
-					unsigned int cache_set_idx;
-					unsigned int offset;
-				};
-
 				vector<vector<Block>> *_cache;
 
 				string Cache::conHexToBin(string hex);

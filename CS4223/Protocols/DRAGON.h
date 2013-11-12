@@ -10,6 +10,25 @@ namespace CS4223{
 
 		class DRAGON : public CS4223::Protocol {
 			private:
+				CS4223::Processor::Cache *_cache;
+				CS4223::Bus *_sharedBus;
+
+				class State{
+					private:
+						string Dragon_State;
+					public:
+						State(){
+							this->Dragon_State;
+						}
+						void set_dragonstate(string state){
+							this->Dragon_State=state;
+						}
+						string get_dragonstate(){
+							return this->Dragon_State;
+						}
+				};
+
+				vector<vector<State>> *_cache_state;
 			public:
 				DRAGON();
 				~DRAGON();
