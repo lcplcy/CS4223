@@ -5,9 +5,6 @@ namespace CS4223{
 		this->bus_queue = new queue<CS4223::Processor::Transaction>();
 		this->_total_address_traffic = 0;
 		this->_total_data_traffic = 0;
-		//Assuming number of processors in an array starts from 0, -1 means no one
-		//is asserting the shared_line
-		this->shared_line = false;
 	}
 
 	Bus::~Bus(){
