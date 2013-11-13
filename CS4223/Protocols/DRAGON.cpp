@@ -56,9 +56,15 @@ namespace CS4223{
 
 			//Cache will return hit or miss
 			for(unsigned int sets=0;sets<cacheSet->size();sets++){
-				
+				//Cache Hit
+				//In Sc, if this cache's processor Read stay in Sc
+				//In E, if this cache's processor Read, stay in E
+				//In Sm, if this cache's processor Read, stay in Sm
+				//In M, if this cache's processor Read, stay in M
 				if(translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="M"
-					|| translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="E"){
+					|| translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="E"
+					|| translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="Sc"
+					|| translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="Sm"){
 					//A Hit
 					miss=false;
 					break;
@@ -66,11 +72,7 @@ namespace CS4223{
 			}
 			//}
 
-			//Cache Hit
-			//In Sc, if this cache's processor Read stay in Sc
-			//In E, if this cache's processor Read, stay in E
-			//In Sm, if this cache's processor Read, stay in Sm
-			//In M, if this cache's processor Read, stay in M
+			
 			if(!miss){
 				this->_cache->inc_hit();
 				*wait_cycle+=1;
@@ -79,55 +81,11 @@ namespace CS4223{
 				//Cache Miss
 				//Check if other cache's have it via bus, if not fetch from memory
 				
-				//Fetch Cache Block from Memory
-				CS4223::Processor::Transaction new_transaction(Bus::Type::BusRd, address);
+				//Send a bus read to request from other caches or memory
+				CS4223::Processor::Transaction new_transaction(CS4223::Processor::Transaction::BusRd, address);
 				this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
 				*wait_cycle+=1;
 			}
-
-			/*	if(this->_sharedBus->shared_line && oneLoop == false){
-					//Random Replacement at the cache set
-					unsigned int random_blk_idx = rand()%cacheSet->size()+0;
-					Processor::Block *selectedBlk = &cacheSet->at(random_blk_idx);
-					DRAGON::State *selectedState = &cacheStateSet->at(random_blk_idx);
-
-					//From this cache's processor, if Read Miss,
-					//From bus, other cache has it,
-					//State: Sc
-					//Other cache's have the memory requested, take from them instead.
-					*wait_cycle+=1;
-					selectedBlk->set_tag(translated_address.tag);
-					selectedState->set_dragonstate("Sc");
-					this->_sharedBus->unset_shared_line();
-					this->cycle = 0;
-					return true;
-
-
-				}else if(oneLoop == true){
-					//If Read Miss, take from memory, and change state to E
-					//From this cache's processor, if Read Miss,
-					//From bus, if no other cache has it,
-					//State: E
-
-					//Miss => access memory add 10 to processor cycle
-					*wait_cycle+=10;
-
-					//Random Replacement at the cache set
-					unsigned int random_blk_idx = rand()%cacheSet->size()+0;
-					Processor::Block *selectedBlk = &cacheSet->at(random_blk_idx);
-					DRAGON::State *selectedState = &cacheStateSet->at(random_blk_idx);
-
-					selectedBlk->set_tag(translated_address.tag);
-					selectedState->set_dragonstate("E");
-					this->cycle = 0;
-					return true;
-				}
-				
-			}*/
-
-			/*this->cycle++;
-			*wait_cycle+=1;
-			return false;*/
 		}
 
 
@@ -137,7 +95,27 @@ namespace CS4223{
 		}
 
 		void DRAGON::Snoop(string address,unsigned int *wait_cycle){
-			if(this->_sharedBus->read_transaction==BUSRD){
+			if(this->_sharedBus->next_transaction()->get_type() == Bus::Type::BusRd && this->_sharedBus->S == true){
+				//Extract block identifier
+				Processor::Cache::Address translated_address = this->_cache->translate_address(address);
+				vector<Processor::Block> *cacheSet = this->_cache->get_cache_set((unsigned int)translated_address.cache_set_idx);
+				vector<State> *cacheStateSet = &this->_cache_state->at((unsigned int)translated_address.cache_set_idx);
+				
+				//Random Replacement at the cache set
+				unsigned int random_blk_idx = rand()%cacheSet->size()+0;
+				Processor::Block *selectedBlk = &cacheSet->at(random_blk_idx);
+				DRAGON::State *selectedState = &cacheStateSet->at(random_blk_idx);
+
+				//From this cache's processor, if Read Miss,
+				//From bus, other cache has it,
+				//State: Sc
+				//Other cache's have the memory requested, take from them instead.
+				*wait_cycle+=1;
+				selectedBlk->set_tag(translated_address.tag);
+				selectedState->set_dragonstate("Sc");
+				this->_sharedBus->unset_shared_line();
+			}
+			if(this->_sharedBus->next_transaction()->get_type() == Bus::Type::BusRd && this->_sharedBus->S == false){
 				bool miss = true;
 				this->_cache->inc_cache_access();
 
@@ -160,11 +138,11 @@ namespace CS4223{
 						break;
 					}
 				}
-				if(!miss)
+				if(!miss){
 				//Assert shared line if I have the data
 					this->_sharedBus->set_shared_line();
 
-					CS4223::Processor::Transaction new_transaction(Bus::Type::BusRd, address);
+					CS4223::Processor::Transaction new_transaction(CS4223::Processor::Transaction::Type::BusRd, address);
 					this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
 					DRAGON::State *selectedState = &cacheStateSet->at(getSet);
 					//In E, if another cache request via BusRd, NewState = Sc
@@ -184,57 +162,27 @@ namespace CS4223{
 					if(selectedState->get_dragonstate()=="Sc"){
 						selectedState->set_dragonstate("Sc");
 					}
+				}
 			}	
 		}
 	}
 }
-//init - Initialize an array to keep track of the states of each cache byte
-//processor -> cache (protocol) -> bus -> protocol
-//DRAGON METHODS:
 
-/*
-<this is cache.cpp>
+/*For reference
+//If Read Miss, take from memory, and change state to E
+//From this cache's processor, if Read Miss,
+//From bus, if no other cache has it,
+//State: E
 
-while(not_end)
-{
-busTransaction = bus.busTransaction()
-if busTransaction == "busRdx" && busUser != me
-	dragon.doSomething(instruction,&cycle, &clock)
-if(protocol = dragon && busUser == me)
-	dragon.doSomething(instruction,&cycle, &clock)
-if(protocol = mesi && busUser == me)
-	mesi.doSomething()
-}
+//Miss => access memory add 10 to processor cycle
+*wait_cycle+=10;
 
-<this is dragon.cpp>
-doSomething(string instruction, int *cycle, int *clock)//public
-{
-	if instruction == READ
-		if(busRd()) //private to dragon
-			cout << pass;
-		else
-			cout << fail;
-	if instruction == RdX
-		if(busRdX())
-	if instruction == someone_sent_a_read_x
-		invalidate(cache_memory)
-}
+//Random Replacement at the cache set
+unsigned int random_blk_idx = rand()%cacheSet->size()+0;
+Processor::Block *selectedBlk = &cacheSet->at(random_blk_idx);
+DRAGON::State *selectedState = &cacheStateSet->at(random_blk_idx);
 
-private bool busRdX()
-{
-	bool bus_read_pass_fail;
-	.
-	.
-	.
-	bus.busRdX()
-	return bus_read_pass_fail;
-}
-<this is bus.cpp>
-void busRdX()
-{
-	//send a signal to all other cache to invalidate their data
-}
-//take in &clock, &cycle and make respective changes
-//
-
-*/
+selectedBlk->set_tag(translated_address.tag);
+selectedState->set_dragonstate("E");
+this->cycle = 0;
+return true;*/

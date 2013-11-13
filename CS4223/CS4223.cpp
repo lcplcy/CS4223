@@ -11,7 +11,10 @@ namespace CS4223{
 
 		if(arg_count<3){
 
-			this->num_of_processors = 4;
+			raw_protocol_type = "NONE";
+			this->num_of_processors = 1;
+			this->trace_file_name = "WEATHER";
+			//this->num_of_processors = 4;
 			this->cache_size = 4096;
 			this->associativity = 1;
 			this->block_size = 64;
@@ -43,8 +46,8 @@ namespace CS4223{
 
 		if(	this->trace_file_name!="WEATHER"&&
 			this->trace_file_name!="FFT"){
-
-			throw ArgumentException("TraceFile","Invalid Trace File");
+			
+			throw ArgumentException("TraceFile","Invalid Trace File.");
 		}
 
 		this->max_num_of_processor = 16;
@@ -125,7 +128,7 @@ namespace CS4223{
 			//wait for all threads to complete
 			threads[processor].join();
 
-			processors.push_back(CS4223::Processor::Core(instruction_set.at(processor),*all_proc_instruction_count.at(processor),this->sharedBus,this->protocol_type,this->cache_size,this->associativity,this->block_size,processor,this->num_of_processors));
+			processors.push_back(CS4223::Processor::Core(instruction_set.at(processor),*all_proc_instruction_count.at(processor),this->sharedBus,this->protocol_type,this->cache_size,this->associativity,this->block_size));
 
 			if(processors[processor].initialise()){
 				throw InitialisationException("Processor","Individual processor initialisation failed");

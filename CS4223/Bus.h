@@ -11,7 +11,7 @@ using namespace std;
 namespace CS4223{	
 	class Bus{
 		private:
-			bool S;
+			//bool S;
 			queue<CS4223::Processor::Transaction> *bus_queue;
 			unsigned short _bus_address_bytes;
 			unsigned short _bus_rd_data_bytes;
@@ -21,6 +21,7 @@ namespace CS4223{
 			double _total_address_traffic;
 			double _total_data_traffic;
 		public:
+			bool S;
 			Bus();
 			~Bus();
 			enum Type{
