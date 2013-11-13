@@ -48,26 +48,23 @@ namespace CS4223{
 		//Returns false if no data get at all.
 		void DRAGON::ProRd(string address,unsigned int *wait_cycle){
 			bool miss = true;
-			bool oneLoop = false;
 			this->_cache->inc_cache_access();
-			if(this->cycle == this->_cache->_num_cores)
-				oneLoop = true;
-			if(oneLoop == false){
-				//Extract block identifier
-				Processor::Cache::Address translated_address = this->_cache->translate_address(address);
-				vector<Processor::Block> *cacheSet = this->_cache->get_cache_set((unsigned int)translated_address.cache_set_idx);
-				vector<State> *cacheStateSet = &this->_cache_state->at((unsigned int)translated_address.cache_set_idx);
+			
+			//Extract block identifier
+			Processor::Cache::Address translated_address = this->_cache->translate_address(address);
+			vector<Processor::Block> *cacheSet = this->_cache->get_cache_set((unsigned int)translated_address.cache_set_idx);
+			vector<State> *cacheStateSet = &this->_cache_state->at((unsigned int)translated_address.cache_set_idx);
 
-				//Cache will return hit or miss
-				for(unsigned int sets=0;sets<cacheSet->size();sets++){
-					
-					if(translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_valid()==true){
-						//A Hit
-						miss=false;
-						break;
-					}
+			//Cache will return hit or miss
+			for(unsigned int sets=0;sets<cacheSet->size();sets++){
+				
+				if(translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_valid()==true){
+					//A Hit
+					miss=false;
+					break;
 				}
 			}
+			//}
 
 			//Cache Hit
 			//In Sc, if this cache's processor Read stay in Sc
@@ -77,7 +74,6 @@ namespace CS4223{
 			if(!miss){
 				this->_cache->inc_hit();
 				*wait_cycle+=1;
-				return true;
 				//No change in DRAGON STATE.
 			}else{
 				//Cache Miss
@@ -86,9 +82,10 @@ namespace CS4223{
 				//Fetch Cache Block from Memory
 				CS4223::Processor::Transaction new_transaction(address);
 				this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
-				
+				*wait_cycle+=1;
+			}
 
-				if(this->_sharedBus->shared_line && oneLoop == false){
+			/*	if(this->_sharedBus->shared_line && oneLoop == false){
 					//Random Replacement at the cache set
 					unsigned int random_blk_idx = rand()%cacheSet->size()+0;
 					Processor::Block *selectedBlk = &cacheSet->at(random_blk_idx);
@@ -126,11 +123,11 @@ namespace CS4223{
 					return true;
 				}
 				
-			}
+			}*/
 
-			this->cycle++;
+			/*this->cycle++;
 			*wait_cycle+=1;
-			return false;
+			return false;*/
 		}
 
 

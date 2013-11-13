@@ -113,12 +113,12 @@ namespace CS4223{
 		}
 
 		void Core::read_from_addr(string address){
-			CS4223::Protocol::Type protocol_type;
-			if(protocol_type == Protocol::DRAGON){
-				while(!this->_protocol->ProRd(address,&this->_wait_cycle)){
+			//CS4223::Protocol::Type protocol_type;
+			//if(protocol_type == Protocol::DRAGON){
+			//	while(!this->_protocol->ProRd(address,&this->_wait_cycle)){
 					//do_nothing
-				}
-			}
+			//	}
+			//}
 			this->_protocol->ProRd(address,&this->_wait_cycle);
 		}
 
