@@ -12,7 +12,7 @@ namespace CS4223{
 			private:
 				CS4223::Processor::Cache *_cache;
 				CS4223::Bus *_sharedBus;
-
+				int cycle;
 				class State{
 					private:
 						string Dragon_State;

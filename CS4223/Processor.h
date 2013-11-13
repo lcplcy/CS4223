@@ -25,6 +25,8 @@ namespace CS4223{
 					unsigned int _data_ref_count;
 					unsigned int _cur_instruction_idx;
 					double _cache_miss_ratio;
+					unsigned int _core_id;
+					unsigned int _num_cores;
 					Bus *const _sharedBus;
 					Cache *_L1_cache;
 					Protocol *_protocol;
@@ -39,7 +41,9 @@ namespace CS4223{
 						 Protocol::Type protocol_type,
 						 unsigned int cache_size,
 						 unsigned short assoc, 
-						 unsigned int blk_size);
+						 unsigned int blk_size,
+						 unsigned int core_id,
+						 unsigned int num_cores);
 					~Core();
 					//Public Members
 					enum State{
