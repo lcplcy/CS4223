@@ -21,6 +21,7 @@ namespace CS4223{
 			
 			virtual void ProRd(string address,unsigned int *wait_cycle)=0;
 			virtual void ProWr(string address,unsigned int *wait_cycle)=0;
+			void Snoop(string address,unsigned int *wait_cycle);
 	};
 }
 #endif

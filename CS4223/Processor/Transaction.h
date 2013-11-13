@@ -11,8 +11,15 @@ namespace CS4223{
 			private:
 				string _address;
 			public:
-				Transaction(string address);
+				enum Type{
+					BusRd,
+					BusRdX,
+					BusUp,
+					BusWr
+				}_type;
+				Transaction(Type type,string address);
 				string Transaction::get_address();
+				Type Transaction::get_type();
 		};
 	}
 }

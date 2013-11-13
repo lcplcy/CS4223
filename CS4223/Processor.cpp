@@ -18,16 +18,15 @@ namespace CS4223{
 
 			if(protocol_type==Protocol::MESI){
 				this->_protocol = new CS4223::Protocols::MESI(this->_L1_cache,this->_sharedBus);
-				data_in_bytes_for_each_transaction = blk_size;
+				this->_sharedBus->set_bytes_per_transaction(4,blk_size,blk_size,blk_size,0);
 			}else if(protocol_type==Protocol::DRAGON){
-				this->_protocol = new CS4223::Protocols::DRAGON();
-				data_in_bytes_for_each_transaction = 2; //One word per transaction because it is an update protocol
+				this->_protocol = new CS4223::Protocols::DRAGON(this->_L1_cache,this->_sharedBus);
+				this->_sharedBus->set_bytes_per_transaction(4,blk_size,blk_size,blk_size,2);  //Only one word size per transaction
 			}else if(protocol_type==Protocol::NONE){
 				this->_protocol = new CS4223::Protocols::BASIC(this->_L1_cache,this->_sharedBus);
-				data_in_bytes_for_each_transaction = blk_size;
+				this->_sharedBus->set_bytes_per_transaction(4,blk_size,blk_size,blk_size,0);
 			}
 
-			this->_sharedBus->set_bytes_per_transaction(address_in_bytes_for_each_transaction,data_in_bytes_for_each_transaction);
 		}
 
 		Core::~Core(){

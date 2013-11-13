@@ -1,10 +1,8 @@
 #include "DRAGON.h"
 
-
-
 namespace CS4223{
 	namespace Protocols{
-		DRAGON::DRAGON(){
+		DRAGON::DRAGON(CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus){
 			this->cycle = 0;
 		}
 
@@ -48,7 +46,7 @@ namespace CS4223{
 
 		//Returns true only if data is successfully obtained from other cache, own cache or memory.
 		//Returns false if no data get at all.
-		bool DRAGON::ProRd(string address,unsigned int *wait_cycle){
+		void DRAGON::ProRd(string address,unsigned int *wait_cycle){
 			bool miss = true;
 			bool oneLoop = false;
 			this->_cache->inc_cache_access();
@@ -126,7 +124,9 @@ namespace CS4223{
 					this->cycle = 0;
 					return true;
 				}
+				
 			}
+
 			this->cycle++;
 			return false;
 		}
@@ -182,10 +182,8 @@ namespace CS4223{
 					if(selectedState->get_dragonstate=="Sc"){
 						selectedState->set_dragonstate("Sc");
 					}
-
-			}
+			}	
 		}
-
 	}
 }
 //init - Initialize an array to keep track of the states of each cache byte

@@ -242,7 +242,7 @@ namespace CS4223{
 		for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
 			double miss_ratio  = this->processors[processor].get_cache_miss_ratio();
 			unsigned int hit = this->processors[processor].get_total_cache_hit();
-			unsigned int access = this->processors[processor].get_total_cache_access();
+			unsigned int   access = this->processors[processor].get_total_cache_access();
 			cout << "Processor" << " [" << processor << "]" << " Miss Ratio : " << miss_ratio << endl;
 			cout << "Processor" << " [" << processor << "]" << " Cache Hit : " << hit  << endl;
 			cout << "Processor" << " [" << processor << "]" << " Total Access : " << access  << endl;

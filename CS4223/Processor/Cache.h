@@ -56,6 +56,7 @@ namespace CS4223{
 				unsigned int Cache::get_num_of_cache_sets();
 				void inc_cache_access();
 				void inc_hit();
+				void flush();
 			};
 	}
 }
