@@ -2,19 +2,17 @@
 
 namespace CS4223{
 	namespace Processor{
-		Core::Core(vector<CS4223::Processor::Instruction*> *instructions,const unsigned int instruction_count,Bus * const sharedBus,CS4223::Protocol::Type protocol_type,unsigned int cache_size,unsigned short assoc, unsigned int blk_size, unsigned int core_id, unsigned int num_cores)
+		Core::Core(vector<CS4223::Processor::Instruction*> *instructions,const unsigned int instruction_count,Bus * const sharedBus,CS4223::Protocol::Type protocol_type,unsigned int cache_size,unsigned short assoc, unsigned int blk_size)
 			:_instructions(instructions),_instruction_count(instruction_count),_sharedBus(sharedBus)
 		{
 			// Create a new processor with cache
-			this->_core_id = core_id;
-			this->_num_cores = num_cores;
 			this->_data_ref_count = instructions->size();
 			this->_instruction_ref_count = _instruction_count - this->_data_ref_count;
 
 			unsigned short address_in_bytes_for_each_transaction = 4;
 			unsigned short data_in_bytes_for_each_transaction;
 
-			this->_L1_cache = new Cache(this->_sharedBus,cache_size,assoc,blk_size, core_id, num_cores);
+			this->_L1_cache = new Cache(this->_sharedBus,cache_size,assoc,blk_size);
 
 			if(protocol_type==Protocol::MESI){
 				this->_protocol = new CS4223::Protocols::MESI(this->_L1_cache,this->_sharedBus);

@@ -3,14 +3,12 @@
 namespace CS4223{
 	namespace Processor{
 		
-		Cache::Cache(Bus *sharedBus, unsigned int size,unsigned short assoc,unsigned int blk_size, unsigned int core_id, unsigned int num_cores):
+		Cache::Cache(Bus *sharedBus, unsigned int size,unsigned short assoc,unsigned int blk_size):
 		_sharedBus(sharedBus),
 		_size(size),
 		_assoc(assoc),
 		_blk_size(blk_size)
 		{
-            this->_core_id = core_id;
-            this->_num_cores = num_cores;
 			//Given in assignment paper
 			this->_word_size_bytes = 2;
 

@@ -3,7 +3,6 @@
 namespace CS4223{
 	namespace Protocols{
 		DRAGON::DRAGON(CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus){
-			this->cycle = 0;
 		}
 
 		DRAGON::~DRAGON(){
@@ -58,7 +57,8 @@ namespace CS4223{
 			//Cache will return hit or miss
 			for(unsigned int sets=0;sets<cacheSet->size();sets++){
 				
-				if(translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_valid()==true){
+				if(translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="M"
+					|| translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="E"){
 					//A Hit
 					miss=false;
 					break;
@@ -80,7 +80,7 @@ namespace CS4223{
 				//Check if other cache's have it via bus, if not fetch from memory
 				
 				//Fetch Cache Block from Memory
-				CS4223::Processor::Transaction new_transaction(address);
+				CS4223::Processor::Transaction new_transaction(Bus::Type::BusRd, address);
 				this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
 				*wait_cycle+=1;
 			}
@@ -150,9 +150,12 @@ namespace CS4223{
 				unsigned int getSet;
 				for(unsigned int sets=0;sets<cacheSet->size();sets++){
 					
-					if(translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_valid()==true){
+					if(translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="M" ||
+						translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="Sc" ||
+						translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="Sm" ||
+						translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="E"){
 						//A Hit
-						getSet = sets
+						getSet = sets;
 						miss=false;
 						break;
 					}
@@ -165,20 +168,20 @@ namespace CS4223{
 					this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
 					DRAGON::State *selectedState = &cacheStateSet->at(getSet);
 					//In E, if another cache request via BusRd, NewState = Sc
-					if(selectedState->get_dragonstate=="E")
+					if(selectedState->get_dragonstate()=="E")
 						selectedState->set_dragonstate("Sc");
 					//In M, if another cache request via BusRd, do a flush and change to Sm
-					if(selectedState->get_dragonstate=="M"){
+					if(selectedState->get_dragonstate()=="M"){
 						this->_cache->flush();
 						selectedState->set_dragonstate("Sc");
 					}
 					//In Sm, if another cache request via BusRd, do a flush and remain in Sm
-					if(selectedState->get_dragonstate=="Sm"){
+					if(selectedState->get_dragonstate()=="Sm"){
 						this->_cache->flush();
 						selectedState->set_dragonstate("Sm");
 					}
 					//In Sc, if another cache request via BusRd, remain in Sc
-					if(selectedState->get_dragonstate=="Sc"){
+					if(selectedState->get_dragonstate()=="Sc"){
 						selectedState->set_dragonstate("Sc");
 					}
 			}	

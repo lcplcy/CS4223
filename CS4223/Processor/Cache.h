@@ -26,8 +26,7 @@ namespace CS4223{
 				unsigned int _num_of_blks;
 				unsigned int _num_of_words;
 				unsigned short _word_size_bytes;
-				unsigned int _core_id;
-				unsigned int _num_cores;
+
 
 				//Analytics
 				unsigned int _cache_access;
@@ -39,7 +38,7 @@ namespace CS4223{
 				double Cache::string_to_double(string bin);
 				unsigned short Cache::powerOf2(unsigned int num);
 			public:
-				Cache(Bus *sharedBus, unsigned int size,unsigned short assoc,unsigned int blk_size, unsigned int core_id, unsigned int num_cores);
+				Cache(Bus *sharedBus, unsigned int size,unsigned short assoc,unsigned int blk_size);
 				~Cache();
 				
 				struct Address{
