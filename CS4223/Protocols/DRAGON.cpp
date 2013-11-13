@@ -76,6 +76,7 @@ namespace CS4223{
 			//In M, if this cache's processor Read, stay in M
 			if(!miss){
 				this->_cache->inc_hit();
+				*wait_cycle+=1;
 				return true;
 				//No change in DRAGON STATE.
 			}else{
@@ -128,6 +129,7 @@ namespace CS4223{
 			}
 
 			this->cycle++;
+			*wait_cycle+=1;
 			return false;
 		}
 
