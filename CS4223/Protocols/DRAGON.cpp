@@ -4,7 +4,7 @@
 
 namespace CS4223{
 	namespace Protocols{
-		DRAGON::DRAGON(){
+		DRAGON::DRAGON(CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus){
 
 		}
 

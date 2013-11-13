@@ -38,8 +38,7 @@ namespace CS4223{
 				unsigned short Cache::powerOf2(unsigned int num);
 			public:
 				Cache(Bus *sharedBus, unsigned int size,unsigned short assoc,unsigned int blk_size);
-				~Cache();
-				
+				~Cache();	
 				struct Address{
 					string tag;
 					unsigned int cache_set_idx;
@@ -54,6 +53,7 @@ namespace CS4223{
 				unsigned int Cache::get_num_of_cache_sets();
 				void inc_cache_access();
 				void inc_hit();
+				void flush();
 			};
 	}
 }

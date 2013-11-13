@@ -7,12 +7,14 @@ using namespace std;
 
 namespace CS4223{
 	namespace Processor{
+
 		class Transaction{
 			private:
 				string _address;
 			public:
 				Transaction(string address);
 				string Transaction::get_address();
+				//CS4223::Bus::Type Transaction::get_type();
 		};
 	}
 }

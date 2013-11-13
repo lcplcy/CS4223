@@ -142,7 +142,13 @@ namespace CS4223{
 			 this->_hit+=1;
 		}
 
+		void Cache::flush(){
+			vector<Block> cache_set(this->_assoc,Block(this->_blk_size));
 
+			delete this->_cache;
+
+			this->_cache = new vector<vector<Block>>(this->_num_of_cache_sets,cache_set);
+		}
 
 		unsigned short Cache::get_associativity(){
 			return this->_assoc;
