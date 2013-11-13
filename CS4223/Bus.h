@@ -19,7 +19,7 @@ namespace CS4223{
 			double _total_address_traffic;
 			double _total_data_traffic;
 			//DRAGON
-			int shared_line;
+			bool shared_line;
 			//If read miss, other cache will use this shared_line to indicate that they have
 			//the data, and pass the data to the requesting cache.
 			//If write hit, and if other cache assert the shared_line to indicate they also have

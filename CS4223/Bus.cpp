@@ -7,7 +7,7 @@ namespace CS4223{
 		this->_total_data_traffic = 0;
 		//Assuming number of processors in an array starts from 0, -1 means no one
 		//is asserting the shared_line
-		this->shared_line = -1;
+		this->shared_line = false;
 	}
 
 	Bus::~Bus(){

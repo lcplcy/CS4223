@@ -14,7 +14,7 @@ namespace CS4223{
 		class MESI : public CS4223::Protocol {
 			private:
 				enum State{
-					M,
+					bool M,
 					E,
 					S,
 					I
