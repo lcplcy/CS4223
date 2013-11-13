@@ -44,7 +44,7 @@ namespace CS4223{
 				*wait_cycle+=10;
 
 				//Fetch Cache Block from Memory
-				CS4223::Processor::Transaction new_transaction(address);
+				CS4223::Processor::Transaction new_transaction(CS4223::Processor::Transaction::BusRd,address);
 				this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
 
 				//Random Replacement at the cache set
@@ -53,7 +53,7 @@ namespace CS4223{
 				BASIC::State *selectedState = &cacheStateSet->at(random_blk_idx);
 
 				if(selectedState->get_dirty()){
-					Processor::Transaction new_transaction(address);
+					Processor::Transaction new_transaction(CS4223::Processor::Transaction::BusWr,address);
 					this->_sharedBus->add_transaction(Bus::Type::BusWr,new_transaction);
 				}
 
@@ -99,7 +99,7 @@ namespace CS4223{
 				*wait_cycle+=10;
 
 				//Fetch Cache Block from Memory
-				CS4223::Processor::Transaction new_transaction(address);
+				CS4223::Processor::Transaction new_transaction(CS4223::Processor::Transaction::BusRd,address);
 				this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
 
 				//Random Replacement at the cache set
@@ -108,7 +108,7 @@ namespace CS4223{
 				BASIC::State *selectedState = &cacheStateSet->at(random_blk_idx);
 
 				if(selectedState->get_dirty()){
-					Processor::Transaction new_transaction(address);
+					Processor::Transaction new_transaction(CS4223::Processor::Transaction::BusWr,address);
 					this->_sharedBus->add_transaction(Bus::Type::BusWr,new_transaction);
 				}
 

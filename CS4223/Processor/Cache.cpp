@@ -134,6 +134,7 @@ namespace CS4223{
 			return &this->_cache->at(cache_set_idx);
 		}
 
+
 		void Cache::inc_cache_access(){
 			 this->_cache_access+=1;	
 		}
