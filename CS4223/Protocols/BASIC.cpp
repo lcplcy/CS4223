@@ -117,5 +117,9 @@ namespace CS4223{
 				selectedState->set_valid(true);
 			}
 		}
+
+		void BASIC::Snoop(const unsigned short proc_id, string address){
+
+		}
 	}
 }

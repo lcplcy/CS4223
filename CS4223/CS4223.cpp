@@ -184,7 +184,7 @@ namespace CS4223{
 				this->processors[processor].next_instr();
 
 				if(bus_transaction!=NULL){
-					this->processors[processor].listen(bus_transaction->get_address());
+					this->processors[processor].listen(bus_transaction->get_proc_id(),bus_transaction->get_address());
 				}
 
 				if(this->processors[processor].get_state()==CS4223::Processor::Core::State::complete
@@ -214,7 +214,7 @@ namespace CS4223{
 					}
 				
 					for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
-						this->processors[processor].listen(bus_transaction->get_address());
+						this->processors[processor].listen(bus_transaction->get_proc_id(),bus_transaction->get_address());
 					}
 				}
 

@@ -127,7 +127,7 @@ namespace CS4223{
 
 		}
 
-		void DRAGON::Snoop(string address,unsigned int *wait_cycle){
+		void DRAGON::Snoop(const unsigned short proc_id, string address){
 			/*
 			bool miss = true;
 			this->_cache->inc_cache_access();
