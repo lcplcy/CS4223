@@ -10,6 +10,7 @@ namespace CS4223{
 		class Transaction{
 			private:
 				string _address;
+				unsigned short _issuing_proc;
 			public:
 				enum Type{
 					BusRd,
@@ -17,9 +18,10 @@ namespace CS4223{
 					BusUp,
 					BusWr
 				}_type;
-				Transaction(Type type,string address);
-				string Transaction::get_address();
-				Type Transaction::get_type();
+				Transaction(const unsigned short proc_id, Type type,string address);
+				unsigned short get_proc_id();
+				string get_address();
+				Type get_type();
 		};
 	}
 }

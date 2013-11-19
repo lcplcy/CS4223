@@ -12,13 +12,13 @@ namespace CS4223{
 			this->_L1_cache = new Cache(this->_sharedBus,cache_size,assoc,blk_size);
 
 			if(protocol_type==Protocol::MESI){
-				this->_protocol = new CS4223::Protocols::MESI(this->_L1_cache,this->_sharedBus);
+				this->_protocol = new CS4223::Protocols::MESI(this->_proc_id,this->_L1_cache,this->_sharedBus);
 				this->_sharedBus->set_bytes_per_transaction(4,blk_size,blk_size,blk_size,0);
 			}else if(protocol_type==Protocol::DRAGON){
-				this->_protocol = new CS4223::Protocols::DRAGON(this->_L1_cache,this->_sharedBus);
+				this->_protocol = new CS4223::Protocols::DRAGON(this->_proc_id,this->_L1_cache,this->_sharedBus);
 				this->_sharedBus->set_bytes_per_transaction(4,blk_size,blk_size,blk_size,2);  //Only one word size per transaction
 			}else if(protocol_type==Protocol::NONE){
-				this->_protocol = new CS4223::Protocols::BASIC(this->_L1_cache,this->_sharedBus);
+				this->_protocol = new CS4223::Protocols::BASIC(this->_proc_id,this->_L1_cache,this->_sharedBus);
 				this->_sharedBus->set_bytes_per_transaction(4,blk_size,blk_size,blk_size,0);
 			}
 

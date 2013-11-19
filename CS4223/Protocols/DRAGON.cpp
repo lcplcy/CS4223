@@ -3,7 +3,9 @@
 namespace CS4223{
 	namespace Protocols{
 		
-		DRAGON::DRAGON(CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus){
+		DRAGON::DRAGON(const unsigned short proc_id,CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus)
+			:_proc_id(proc_id)
+		{
 
 		}
 

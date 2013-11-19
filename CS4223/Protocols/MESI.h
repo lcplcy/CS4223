@@ -21,8 +21,9 @@ namespace CS4223{
 				};
 				CS4223::Processor::Cache *_cache;
 				CS4223::Bus *_sharedBus;
+				unsigned short _proc_id;
 			public:
-				MESI(CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus);
+				MESI(const unsigned short proc_id, CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus);
 				~MESI();
 				void ProRd(string address,unsigned int *wait_cycle);
 				void ProWr(string address,unsigned int *wait_cycle);
