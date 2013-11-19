@@ -71,5 +71,9 @@ namespace CS4223{
 	double Bus::get_total_data_traffic(){
 		return this->_total_data_traffic;
 	}
+
+	bool Bus::read_shared_line(){
+		return this->S;
+	}
 }
 

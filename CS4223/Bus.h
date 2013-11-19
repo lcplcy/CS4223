@@ -36,6 +36,7 @@ namespace CS4223{
 			CS4223::Processor::Transaction* next_transaction();
 			void set_shared_line();
 			void unset_shared_line();
+			bool read_shared_line();
 			double get_total_address_traffic();
 			double get_total_data_traffic();
 	};
