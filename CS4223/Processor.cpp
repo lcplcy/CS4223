@@ -115,8 +115,8 @@ namespace CS4223{
 			this->_protocol->ProWr(address,&this->_wait_cycle);
 		}
 
-		void Core::listen(const unsigned short proc_id, string address){
-			this->_protocol->Snoop(proc_id,address);
+		void Core::listen(Transaction incoming_transaction){
+			this->_protocol->Snoop(incoming_transaction);
 		}
 
 		bool Core::wait(){

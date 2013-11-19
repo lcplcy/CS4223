@@ -127,7 +127,7 @@ namespace CS4223{
 
 		}
 
-		void DRAGON::Snoop(const unsigned short proc_id, string address){
+		void DRAGON::Snoop(CS4223::Processor::Transaction incoming_transaction){
 			/*
 			bool miss = true;
 			this->_cache->inc_cache_access();

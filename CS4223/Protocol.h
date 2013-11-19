@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "Processor\Transaction.h";
+
 using namespace std;
 
 /**
@@ -21,7 +23,7 @@ namespace CS4223{
 			
 			virtual void ProRd(string address,unsigned int *wait_cycle)=0;
 			virtual void ProWr(string address,unsigned int *wait_cycle)=0;
-			virtual void Snoop(const unsigned short proc_id, string address)=0;
+			virtual void Snoop(CS4223::Processor::Transaction incoming_transaction)=0;
 	};
 }
 #endif
