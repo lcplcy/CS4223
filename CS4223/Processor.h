@@ -19,6 +19,7 @@ namespace CS4223{
 	namespace Processor{
 			class Core{
 				private:
+					unsigned short _proc_id;
 					vector<Instruction*> *_instructions;
 					unsigned int _instruction_count;
 					unsigned int _instruction_ref_count;
@@ -34,6 +35,7 @@ namespace CS4223{
 				public:
 					//Constructor & Destructor
 					Core(vector<Instruction*> *instructions,
+						 const unsigned short proc_id,
 						 const unsigned int instruction_count,
 						 Bus * const sharedBus,
 						 Protocol::Type protocol_type,

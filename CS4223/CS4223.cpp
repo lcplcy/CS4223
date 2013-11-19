@@ -125,7 +125,7 @@ namespace CS4223{
 			//wait for all threads to complete
 			threads[processor].join();
 
-			processors.push_back(CS4223::Processor::Core(instruction_set.at(processor),*all_proc_instruction_count.at(processor),this->sharedBus,this->protocol_type,this->cache_size,this->associativity,this->block_size));
+			processors.push_back(CS4223::Processor::Core(instruction_set.at(processor),processor,*all_proc_instruction_count.at(processor),this->sharedBus,this->protocol_type,this->cache_size,this->associativity,this->block_size));
 
 			if(processors[processor].initialise()){
 				throw InitialisationException("Processor","Individual processor initialisation failed");
