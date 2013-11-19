@@ -47,6 +47,9 @@ namespace CS4223{
 				*/
 		}
 
+		void MESI::Snoop(const unsigned short proc_id, string address){
+
+		}
 
 	}
 }
