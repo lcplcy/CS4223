@@ -118,7 +118,7 @@ namespace CS4223{
 			}
 		}
 
-		void BASIC::Snoop(const unsigned short proc_id, string address){
+		void BASIC::Snoop(CS4223::Processor::Transaction incoming_transaction){
 
 		}
 	}

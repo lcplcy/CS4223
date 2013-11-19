@@ -47,7 +47,7 @@ namespace CS4223{
 				*/
 		}
 
-		void MESI::Snoop(const unsigned short proc_id, string address){
+		void MESI::Snoop(CS4223::Processor::Transaction incoming_transaction){
 
 		}
 
