@@ -2,8 +2,8 @@
 
 namespace CS4223{
 	namespace Processor{
-		Core::Core(vector<CS4223::Processor::Instruction*> *instructions,const unsigned int instruction_count,Bus * const sharedBus,CS4223::Protocol::Type protocol_type,unsigned int cache_size,unsigned short assoc, unsigned int blk_size)
-			:_instructions(instructions),_instruction_count(instruction_count),_sharedBus(sharedBus)
+		Core::Core(vector<CS4223::Processor::Instruction*> *instructions,const unsigned short proc_id,const unsigned int instruction_count,Bus * const sharedBus,CS4223::Protocol::Type protocol_type,unsigned int cache_size,unsigned short assoc, unsigned int blk_size)
+			:_instructions(instructions),_proc_id(proc_id),_instruction_count(instruction_count),_sharedBus(sharedBus)
 		{
 			// Create a new processor with cache
 			this->_data_ref_count = instructions->size();
