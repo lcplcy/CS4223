@@ -45,9 +45,6 @@
     <ClInclude Include="Protocol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Protocols\MESI.h">
-      <Filter>Header Files\Protocols</Filter>
-    </ClInclude>
     <ClInclude Include="Protocols\DRAGON.h">
       <Filter>Header Files\Protocols</Filter>
     </ClInclude>
@@ -67,6 +64,12 @@
       <Filter>Header Files\Processor</Filter>
     </ClInclude>
     <ClInclude Include="Processor\Block.h">
+      <Filter>Header Files\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocols\MOESI.h">
+      <Filter>Header Files\Protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocols\MESI.h">
       <Filter>Header Files\Processor</Filter>
     </ClInclude>
   </ItemGroup>
@@ -103,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="Processor\Block.cpp">
       <Filter>Source Files\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="Protocols\MOESI.cpp">
+      <Filter>Source Files\Protocols</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

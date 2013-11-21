@@ -9,19 +9,8 @@ namespace CS4223{
 
 		string raw_protocol_type = "";
 
-		if(arg_count<3){
-
-			//raw_protocol_type = "NONE";
-			//this->num_of_processors = 1;
-			//this->trace_file_name = "WEATHER";
-			this->num_of_processors = 4;
-			this->cache_size = 4096;
-			this->associativity = 1;
-			this->block_size = 64;
-
-		}else{
+		if(arg_count>0){
 			for(int i = 0; i < arg_count; i++) {
-
 				raw_protocol_type = main_arg[1];
 				this->trace_file_name = main_arg[2];
 				this->num_of_processors = (unsigned short) strtoul(main_arg[3], NULL, 0);
@@ -31,10 +20,27 @@ namespace CS4223{
 			}
 		}
 
+		//Create the output filename
+
+		this->output_file_name += raw_protocol_type;
+		this->output_file_name += "_";
+		this->output_file_name += main_arg[2];
+		this->output_file_name += "_";
+		this->output_file_name += main_arg[3];
+		this->output_file_name += "_";
+		this->output_file_name += main_arg[4];
+		this->output_file_name += "_";
+		this->output_file_name += main_arg[5];
+		this->output_file_name += "_";
+		this->output_file_name += main_arg[6];
+		this->output_file_name += ".txt";
+
 		// Verification & Assignment
 
 		if(raw_protocol_type=="MESI"){
 			this->protocol_type = Protocol::MESI;
+		}else if(raw_protocol_type=="MOESI"){
+			this->protocol_type = Protocol::MOESI;
 		}else if(raw_protocol_type=="DRAGON"){
 			this->protocol_type = Protocol::DRAGON;
 		}else if(raw_protocol_type=="NONE"){
@@ -178,7 +184,7 @@ namespace CS4223{
 
 		while(1){
 
-			CS4223::Processor::Transaction *bus_transaction = NULL; 
+			CS4223::Processor::Transaction bus_transaction = this->sharedBus->next_transaction();
 
 			//A single clock cycle
 
@@ -186,9 +192,7 @@ namespace CS4223{
 
 				this->processors[processor].next_instr();
 
-				if(bus_transaction!=NULL){
-					this->processors[processor].listen(bus_transaction->get_address());
-				}
+				this->processors[processor].listen(bus_transaction);
 
 				if(this->processors[processor].get_state()==CS4223::Processor::Core::State::complete
 				&& this->processors[processor].get_state()!=CS4223::Processor::Core::State::cleaned_up){
@@ -200,7 +204,6 @@ namespace CS4223{
 				}
 			}
 
-			bus_transaction = this->sharedBus->next_transaction();
 
 			if(completed_processors==this->num_of_processors){
 				// All processor completed execution
@@ -210,14 +213,15 @@ namespace CS4223{
 
 					this->clock+=1;
 
-					CS4223::Processor::Transaction *bus_transaction = this->sharedBus->next_transaction();
+					bus_transaction = this->sharedBus->next_transaction();
 
-					if(bus_transaction==NULL){
+					if(bus_transaction.get_address()==""){
 						break;
 					}
-				
+
+
 					for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
-						this->processors[processor].listen(bus_transaction->get_address());
+						this->processors[processor].listen(bus_transaction);
 					}
 				}
 
@@ -237,21 +241,34 @@ namespace CS4223{
 
 	void Core::analyse(){
 
+		ofstream output_file;
+		output_file.open(this->output_file_name);
+
+		if(output_file.is_open()){
+
 		cout << "Total Number of Clk Cycle : " << this->clock << endl;
+		output_file << "Total Number of Clk Cycle : " << this->clock << endl;
 
 		//All private members should not be changed from this point onwards
 		cout << "1. Data Cache Miss Ratio " << endl;
+		output_file << "1. Data Cache Miss Ratio " << endl;
 
 		for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
 			double miss_ratio  = this->processors[processor].get_cache_miss_ratio();
 			unsigned int hit = this->processors[processor].get_total_cache_hit();
 			unsigned int   access = this->processors[processor].get_total_cache_access();
+
 			cout << "Processor" << " [" << processor << "]" << " Miss Ratio : " << miss_ratio << endl;
 			cout << "Processor" << " [" << processor << "]" << " Cache Hit : " << hit  << endl;
 			cout << "Processor" << " [" << processor << "]" << " Total Access : " << access  << endl;
+
+			output_file << "Processor" << " [" << processor << "]" << " Miss Ratio : " << miss_ratio << endl;
+			output_file << "Processor" << " [" << processor << "]" << " Cache Hit : " << hit  << endl;
+			output_file << "Processor" << " [" << processor << "]" << " Total Access : " << access  << endl;
 		}
 
 		cout << "2. Address & Data Traffic " << endl;
+		output_file << "2. Address & Data Traffic " << endl;
 		
 		double total_address = this->sharedBus->get_total_address_traffic();
 		double total_data = this->sharedBus->get_total_data_traffic();
@@ -260,17 +277,25 @@ namespace CS4223{
 			
 			double address_per_cache_access  = (double) total_address/this->processors[processor].get_total_cache_access();
 			cout << "Processor Address" << "[" << processor << "]" << " : " <<  address_per_cache_access << endl;
+			output_file << "Processor Address" << "[" << processor << "]" << " : " <<  address_per_cache_access << endl;
 
 			double data_per_cache_access  = (double) total_data/this->processors[processor].get_total_cache_access();
 			cout << "Processor Data" << "["  << processor << "]" << " : " <<  data_per_cache_access << endl;
+			output_file << "Processor Data" << "["  << processor << "]" << " : " <<  data_per_cache_access << endl;
 		}
 
 		cout << "3. Execution Cycles" << endl;
+		output_file  << "3. Execution Cycles" << endl;
 
 		for(unsigned short processor=0;processor<this->num_of_processors;processor++){	
 			
 			cout << "Processor Cycles" << "[" << processor << "]" << ":" << this->processors[processor].get_processor_execution_cycles() << endl;
+			output_file << "Processor Cycles" << "[" << processor << "]" << ":" << this->processors[processor].get_processor_execution_cycles() << endl;
 		}
+
+		}
+
+		output_file.close();
 	}
 }
 
@@ -294,6 +319,8 @@ int main(int argc, char* argv[])
 		cout << initEx.getMessage();
 	}
 
+	//Beep
+	cout << '\a';
 	system("pause");
 
 	return 0;

@@ -24,14 +24,16 @@ namespace CS4223{
 		this->_bus_up_data_bytes = bus_up_data;
 	}
 
-	CS4223::Processor::Transaction* Bus::next_transaction(){
+	CS4223::Processor::Transaction Bus::next_transaction(){
+
+		CS4223::Processor::Transaction processing_transaction;
+
 		if(!this->bus_queue->empty()){
-			CS4223::Processor::Transaction processing_transaction = this->bus_queue->front();
+			processing_transaction = this->bus_queue->front();
 			this->bus_queue->pop();
-			return &processing_transaction;
-		}else{
-			return NULL;
 		}
+
+		return processing_transaction;
 	}
 
 	void Bus::add_transaction(Type transaction_type, CS4223::Processor::Transaction new_transaction){
@@ -56,12 +58,29 @@ namespace CS4223{
 		this->bus_queue->push(new_transaction);
 	}
 
-	void Bus::set_shared_line(){
-		this->S = true;
+	void Bus::set_shared_line(string address){
+
+		if(this->S.count(address)>0){
+			unsigned short num_of_shared_cache = this->read_shared_line(address);
+			num_of_shared_cache+=1;
+			this->S[address] = num_of_shared_cache;
+		}
+		else{
+			this->S[address]=0;
+		}
 	}
 
-	void Bus::unset_shared_line(){
-		this->S = false;
+	void Bus::unset_shared_line(string address){
+		if(this->S.count(address)>0){
+			unsigned short num_of_shared_cache = this->read_shared_line(address);
+
+			if(num_of_shared_cache>0){
+				num_of_shared_cache-=1;
+				this->S[address] = num_of_shared_cache;
+			}else{
+				this->S.erase(address);
+			}
+		}
 	}
 
 	double Bus::get_total_address_traffic(){
@@ -72,8 +91,15 @@ namespace CS4223{
 		return this->_total_data_traffic;
 	}
 
-	bool Bus::read_shared_line(){
-		return this->S;
+	unsigned short Bus::read_shared_line(string address){
+		std::map<string,unsigned short>::iterator it =  this->S.find(address);
+
+		if(this->S.count(address)!=0){
+			return it->second;
+		}
+		else{
+			return 0;
+		}
 	}
 }
 

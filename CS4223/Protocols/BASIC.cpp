@@ -92,7 +92,7 @@ namespace CS4223{
 
 			if(!miss){
 				//Write Hit
-
+				this->_cache->inc_hit();
 			}else{
 				//Write Miss
 				//Miss => access memory add 10 to processor cycle
@@ -116,6 +116,10 @@ namespace CS4223{
 				selectedState->set_dirty(true);
 				selectedState->set_valid(true);
 			}
+		}
+
+		void BASIC::Snoop(CS4223::Processor::Transaction incoming_transaction){
+
 		}
 	}
 }

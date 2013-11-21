@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "Processor\Transaction.h"
+
 using namespace std;
 
 /**
@@ -16,12 +18,13 @@ namespace CS4223{
 			enum Type{
 				NONE,
 				MESI,
-				DRAGON
+				DRAGON,
+				MOESI
 			};
 			
 			virtual void ProRd(string address,unsigned int *wait_cycle)=0;
 			virtual void ProWr(string address,unsigned int *wait_cycle)=0;
-			void Snoop(string address,unsigned int *wait_cycle);
+			virtual void Snoop(CS4223::Processor::Transaction incoming_transaction)=0;
 	};
 }
 #endif

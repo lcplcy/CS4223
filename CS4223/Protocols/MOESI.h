@@ -1,5 +1,5 @@
-#ifndef DRAGON_H
-#define DRAGON_H
+#ifndef MESI_H
+#define MESI_H
 
 #include "../Protocol.h"
 #include "../Processor/Cache.h"
@@ -9,39 +9,39 @@
 using namespace std;
 
 namespace CS4223{
-	namespace Protocols{
+	namespace Protocols{ 
 
-		class DRAGON : public CS4223::Protocol {
+		class MOESI : public CS4223::Protocol {
 			private:
 				CS4223::Processor::Cache *_cache;
 				CS4223::Bus *_sharedBus;
 				unsigned short _proc_id;
 				class State{
-					private:
-						string Dragon_State;
 					public:
+						enum state{
+							M,
+							O,
+							E,
+							S,
+							I
+						}_state;
 						State(){
-							this->Dragon_State;
+							this->_state = state::I;
 						}
-						void set_dragonstate(string state){
-							this->Dragon_State=state;
+						void set_state(const State::state new_state){
+							this->_state = new_state;
 						}
-						string get_dragonstate(){
-							return this->Dragon_State;
+						state get_state(){
+							return this->_state;
 						}
 				};
 				vector<vector<State>> *_cache_state;
 			public:
-				string prev_step;
-				DRAGON(const unsigned short proc_id,CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus);
-				~DRAGON();
+				MOESI(const unsigned short proc_id, CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus);
+				~MOESI();
 				void ProRd(string address,unsigned int *wait_cycle);
 				void ProWr(string address,unsigned int *wait_cycle);
-
-				//void Snoop(string address,unsigned int *wait_cycle);
-
 				void Snoop(CS4223::Processor::Transaction incoming_transaction);
-
 		};
 
 	}

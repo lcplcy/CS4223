@@ -64,7 +64,7 @@ namespace CS4223{
 									  string &value);
 					void read_from_addr(string address);
 					void write_to_addr(string address);
-					void listen(string address);
+					void listen(Transaction incoming_transaction);
 					bool wait();
 					//Analytics
 					double get_cache_miss_ratio();
