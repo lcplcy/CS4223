@@ -135,7 +135,7 @@ namespace CS4223{
 			//BusUpdate and no other cache has my stuff
 			if(trans_type == CS4223::Processor::Transaction::BusUp 
 				&& proc_id== this->_proc_id
-				&& this->_sharedBus->read_shared_line(address)>0)
+				&& this->_sharedBus->read_shared_line(address)==0)
 			{
 				bool miss = true;
 				//Extract block identifier
@@ -166,7 +166,7 @@ namespace CS4223{
 				
 			}
 			//BusUpdate and another cache editing my stuff
-			if(trans_type == CS4223::Processor::Transaction::BusUp
+			else if(trans_type == CS4223::Processor::Transaction::BusUp
 				&& proc_id != this->_proc_id)
 			{
 				bool miss = true;
@@ -285,10 +285,11 @@ namespace CS4223{
 			}
 			//BusRead and no other cache has my stuff
 			else if(trans_type == CS4223::Processor::Transaction::BusRd
-				&& this->_sharedBus->read_shared_line(address) > 0 
-				&& proc_id != this->_proc_id){
+				&& this->_sharedBus->read_shared_line(address) == 0 
+				&& proc_id == this->_proc_id){
 				
 					//Miss => access memory add 10 to processor cycle
+					
 					//Extract block identifier
 					Processor::Cache::Address translated_address = this->_cache->translate_address(address);
 					vector<Processor::Block> *cacheSet = this->_cache->get_cache_set((unsigned int)translated_address.cache_set_idx);
@@ -317,10 +318,6 @@ namespace CS4223{
 			}
 		}
 
-		//===CY DRAGON TODO===
-		//From this cache's processor, if Write Miss,
-		//From bus, if no other cache has it,
-		//State: M
 	}
 }
 
