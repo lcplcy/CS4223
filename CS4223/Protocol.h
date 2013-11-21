@@ -21,7 +21,6 @@ namespace CS4223{
 				DRAGON,
 				MOESI
 			};
-			
 			virtual void ProRd(string address,unsigned int *wait_cycle)=0;
 			virtual void ProWr(string address,unsigned int *wait_cycle)=0;
 			virtual void Snoop(CS4223::Processor::Transaction incoming_transaction)=0;

@@ -1,5 +1,5 @@
-#ifndef MESI_H
-#define MESI_H
+#ifndef MOESI_H
+#define MOESI_H
 
 #include "../Protocol.h"
 #include "../Processor/Cache.h"

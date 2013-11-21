@@ -7,6 +7,7 @@ using namespace std;
 #include "Processor/Instruction.h"
 #include "Protocol.h"
 #include "Bus.h"
+#include "Protocols/MOESI.h"
 #include "Protocols/MESI.h"
 #include "Protocols/DRAGON.h"
 #include "Protocols/BASIC.h"

@@ -5,7 +5,7 @@ namespace CS4223{
 
 		
 		DRAGON::DRAGON(const unsigned short proc_id,CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus)
-			:_proc_id(proc_id)
+			:_proc_id(proc_id),_cache(cache),_sharedBus(sharedBus)
 		{
 			vector<State> cache_set(this->_cache->get_associativity(),State());
 			this->_cache_state = new vector<vector<State>>(this->_cache->get_num_of_cache_sets(),cache_set);
