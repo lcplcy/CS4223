@@ -179,7 +179,7 @@ namespace CS4223{
 
 		}catch (bad_alloc& ba)
 		{
-			cout << "bad_alloc caught: " << ba.what() << endl;
+			//cout << "bad_alloc caught: " << ba.what() << endl;
 		}
 	};
 
