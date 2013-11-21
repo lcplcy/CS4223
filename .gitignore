@@ -10,3 +10,6 @@ Debug/
 
 //Benchmark files
 /Benchmark
+
+//Output files
+*.txt

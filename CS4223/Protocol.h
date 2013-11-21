@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "Processor\Transaction.h";
+#include "Processor\Transaction.h"
 
 using namespace std;
 
@@ -18,7 +18,8 @@ namespace CS4223{
 			enum Type{
 				NONE,
 				MESI,
-				DRAGON
+				DRAGON,
+				MOESI
 			};
 			
 			virtual void ProRd(string address,unsigned int *wait_cycle)=0;

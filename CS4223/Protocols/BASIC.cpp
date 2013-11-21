@@ -92,7 +92,7 @@ namespace CS4223{
 
 			if(!miss){
 				//Write Hit
-
+				this->_cache->inc_hit();
 			}else{
 				//Write Miss
 				//Miss => access memory add 10 to processor cycle

@@ -18,7 +18,8 @@ namespace CS4223{
 					BusUp,
 					BusWr
 				}_type;
-				Transaction(const unsigned short proc_id, Type type,string address);
+				Transaction();
+				Transaction(const unsigned short proc_id,const Type type,const string address);
 				unsigned short get_proc_id();
 				string get_address();
 				Type get_type();

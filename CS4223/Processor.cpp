@@ -116,6 +116,11 @@ namespace CS4223{
 		}
 
 		void Core::listen(Transaction incoming_transaction){
+
+			if(incoming_transaction.get_address()==""){
+				return;
+			}
+
 			this->_protocol->Snoop(incoming_transaction);
 		}
 

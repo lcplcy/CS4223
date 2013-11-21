@@ -22,12 +22,13 @@ namespace CS4223{
 		private:
 			Protocol::Type protocol_type;
 			string trace_file_name;
+			string output_file_name;
 			unsigned short num_of_processors, 
 						   max_num_of_processor,
 						   associativity,
 						   block_size;
-		    unsigned int cache_size,
-						 clock;
+		    unsigned int cache_size;
+			double clock;
 			bool isPowerOf2(unsigned int);
 			void readFile(string rel_dir,vector<Processor::Instruction*> *instructions,unsigned int *instr_count);
 			vector<CS4223::Processor::Core> processors;
