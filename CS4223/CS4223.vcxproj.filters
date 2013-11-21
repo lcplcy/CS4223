@@ -70,7 +70,7 @@
       <Filter>Header Files\Protocols</Filter>
     </ClInclude>
     <ClInclude Include="Protocols\MESI.h">
-      <Filter>Header Files\Processor</Filter>
+      <Filter>Header Files\Protocols</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

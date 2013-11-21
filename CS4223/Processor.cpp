@@ -17,6 +17,9 @@ namespace CS4223{
 			if(protocol_type==Protocol::MESI){
 				this->_protocol = new CS4223::Protocols::MESI(this->_proc_id,this->_L1_cache,this->_sharedBus);
 				this->_sharedBus->set_bytes_per_transaction(4,blk_size,blk_size,blk_size,0);
+			}else if(protocol_type==Protocol::MOESI){
+				this->_protocol = new CS4223::Protocols::MOESI(this->_proc_id,this->_L1_cache,this->_sharedBus);
+				this->_sharedBus->set_bytes_per_transaction(4,blk_size,blk_size,blk_size,2);
 			}else if(protocol_type==Protocol::DRAGON){
 				this->_protocol = new CS4223::Protocols::DRAGON(this->_proc_id,this->_L1_cache,this->_sharedBus);
 				this->_sharedBus->set_bytes_per_transaction(4,blk_size,blk_size,blk_size,2);  //Only one word size per transaction

@@ -9,16 +9,22 @@ namespace CS4223{
 
 		string raw_protocol_type = "";
 
-		if(arg_count>0){
-			for(int i = 0; i < arg_count; i++) {
-				raw_protocol_type = main_arg[1];
-				this->trace_file_name = main_arg[2];
-				this->num_of_processors = (unsigned short) strtoul(main_arg[3], NULL, 0);
-				this->cache_size = (unsigned int) strtoul(main_arg[4], NULL, 0);
-				this->associativity  = (unsigned short) strtoul(main_arg[5], NULL, 0);
-				this->block_size = (unsigned short) strtoul(main_arg[6], NULL, 0);
-			}
-		}
+		if(arg_count<3){
+			raw_protocol_type = "NONE";
+			this->num_of_processors = 1;
+			this->trace_file_name = "WEATHER";
+            this->num_of_processors = 4;
+            this->cache_size = 4096;
+            this->associativity = 1;
+            this->block_size = 64;
+        }else{
+			raw_protocol_type = main_arg[1];
+			this->trace_file_name = main_arg[2];
+			this->num_of_processors = (unsigned short) strtoul(main_arg[3], NULL, 0);
+			this->cache_size = (unsigned int) strtoul(main_arg[4], NULL, 0);
+			this->associativity = (unsigned short) strtoul(main_arg[5], NULL, 0);
+			this->block_size = (unsigned short) strtoul(main_arg[6], NULL, 0);
+        }
 
 		//Create the output filename
 

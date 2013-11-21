@@ -15,6 +15,7 @@ namespace CS4223{
 		}
 
 		void MESI::ProRd(string address,unsigned int *wait_cycle){
+			
 			bool miss = true;
 
 			this->_cache->inc_cache_access();
@@ -30,9 +31,10 @@ namespace CS4223{
 				
 				cacheState = cacheStateSet->at(sets).get_state();
 
+				//Compare each cache block within the cache set
 				if(translated_address.tag==cacheSet->at(sets).get_tag()
 				   &&
-				   cacheState!=State::state::I){
+				   cacheState!=State::I){
 					//A Hit
 					miss=false;
 					break;
@@ -69,6 +71,7 @@ namespace CS4223{
 				//Miss => access memory add 10 to processor cycle
 				*wait_cycle+=10;
 
+				//Send a new transaction
 				CS4223::Processor::Transaction new_transaction(this->_proc_id,CS4223::Processor::Transaction::BusRd,address);
 				this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
 			}
@@ -162,6 +165,7 @@ namespace CS4223{
 							State *selectedState = &cacheStateSet->at(random_blk_idx);
 
 							if(selectedState->get_state()==State::M){
+								//Write back to memory
 								Processor::Transaction new_transaction(this->_proc_id,CS4223::Processor::Transaction::BusWr,address);
 								this->_sharedBus->add_transaction(Bus::Type::BusWr,new_transaction);
 							}
@@ -170,11 +174,11 @@ namespace CS4223{
 
 							//Check the shared line S
 							if(this->_sharedBus->read_shared_line(address)>0){
-								// S
+								// S => Go to S State
 								selectedState->set_state(State::S);
 								this->_sharedBus->set_shared_line(address);
 							}else{
-								//S`
+								// S` => Go to E state
 								selectedState->set_state(State::E);
 							}
 						}
@@ -187,9 +191,17 @@ namespace CS4223{
 
 								if(translated_address.tag==cacheSet->at(sets).get_tag()
 								   &&
-								   cacheState->get_state()==State::state::I){
+								   cacheState->get_state()==State::I){
 									
 									cacheState->set_state(State::M);
+
+									break;
+								}else if(translated_address.tag==cacheSet->at(sets).get_tag()
+										 &&
+										cacheState->get_state()==State::S){
+									
+									cacheState->set_state(State::M);
+									this->_sharedBus->unset_shared_line(address);
 
 									break;
 								}
@@ -202,13 +214,13 @@ namespace CS4223{
 				//Issued by other processor
 				for(unsigned int sets=0;sets<cacheSet->size();sets++){
 				
-								cacheState = &cacheStateSet->at(sets);
+						cacheState = &cacheStateSet->at(sets);
 
-								if(translated_address.tag==cacheSet->at(sets).get_tag()
-								   &&
-								   cacheState->get_state()!=State::state::I){
-									   break;
-								}
+						if(translated_address.tag==cacheSet->at(sets).get_tag()
+							&&
+							cacheState->get_state()!=State::state::I){
+								break;
+						}
 				}
 
 				switch(trans_type){
