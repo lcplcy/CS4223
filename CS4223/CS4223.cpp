@@ -9,14 +9,7 @@ namespace CS4223{
 
 		string raw_protocol_type = "";
 
-		if(arg_count<3){
-
-			this->num_of_processors = 4;
-			this->cache_size = 4096;
-			this->associativity = 1;
-			this->block_size = 64;
-
-		}else{
+		if(arg_count>0){
 			for(int i = 0; i < arg_count; i++) {
 				raw_protocol_type = main_arg[1];
 				this->trace_file_name = main_arg[2];
@@ -59,8 +52,8 @@ namespace CS4223{
 
 		if(	this->trace_file_name!="WEATHER"&&
 			this->trace_file_name!="FFT"){
-
-			throw ArgumentException("TraceFile","Invalid Trace File");
+			
+			throw ArgumentException("TraceFile","Invalid Trace File.");
 		}
 
 		this->max_num_of_processor = 16;

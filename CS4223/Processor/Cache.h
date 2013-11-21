@@ -27,6 +27,7 @@ namespace CS4223{
 				unsigned int _num_of_words;
 				unsigned short _word_size_bytes;
 
+
 				//Analytics
 				unsigned int _cache_access;
 				unsigned int _hit;
@@ -38,7 +39,8 @@ namespace CS4223{
 				unsigned short Cache::powerOf2(unsigned int num);
 			public:
 				Cache(Bus *sharedBus, unsigned int size,unsigned short assoc,unsigned int blk_size);
-				~Cache();	
+				~Cache();
+				
 				struct Address{
 					string tag;
 					unsigned int cache_set_idx;

@@ -30,9 +30,9 @@ namespace CS4223{
 							return this->Dragon_State;
 						}
 				};
-
 				vector<vector<State>> *_cache_state;
 			public:
+				string prev_step;
 				DRAGON(const unsigned short proc_id,CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus);
 				~DRAGON();
 				void ProRd(string address,unsigned int *wait_cycle);
