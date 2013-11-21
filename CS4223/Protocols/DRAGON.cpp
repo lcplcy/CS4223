@@ -125,13 +125,13 @@ namespace CS4223{
 			}
 		}
 
-		void DRAGON::Snoop(CS4223::Processor::Transaction incoming_transaction){
 
+		//void DRAGON::Snoop(string address,unsigned int *wait_cycle){
+		void DRAGON::Snoop(CS4223::Processor::Transaction incoming_transaction){
 			//Extract Transaction Information
 			unsigned short proc_id = incoming_transaction.get_proc_id();
 			CS4223::Processor::Transaction::Type trans_type = incoming_transaction.get_type();
 			string address = incoming_transaction.get_address();
-
 			//BusUpdate and no other cache has my stuff
 			if(trans_type == CS4223::Processor::Transaction::BusUp 
 				&& proc_id== this->_proc_id
@@ -307,6 +307,9 @@ namespace CS4223{
 						selectedState->set_dragonstate("E");
 						this->_sharedBus->unset_shared_line(address);
 					}else if(this->prev_step=="W"){
+						//From this cache's processor, if Write Miss,
+						//From bus, if no other cache has it,
+						//State: M
 						selectedBlk->set_tag(translated_address.tag);
 						selectedState->set_dragonstate("M");
 						this->_sharedBus->unset_shared_line(address);

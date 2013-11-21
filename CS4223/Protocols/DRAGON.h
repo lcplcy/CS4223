@@ -37,7 +37,11 @@ namespace CS4223{
 				~DRAGON();
 				void ProRd(string address,unsigned int *wait_cycle);
 				void ProWr(string address,unsigned int *wait_cycle);
+
+				//void Snoop(string address,unsigned int *wait_cycle);
+
 				void Snoop(CS4223::Processor::Transaction incoming_transaction);
+
 		};
 
 	}

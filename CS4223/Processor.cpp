@@ -127,8 +127,8 @@ namespace CS4223{
 			this->_protocol->ProWr(address,&this->_wait_cycle);
 		}
 
-		void Core::listen(Transaction incoming_transaction){
 
+		void Core::listen(Transaction incoming_transaction){
 			if(incoming_transaction.get_address()==""){
 				return;
 			}
