@@ -2,8 +2,8 @@
 
 namespace CS4223{
 	namespace Processor{
-		Core::Core(vector<CS4223::Processor::Instruction*> *instructions,const unsigned int instruction_count,Bus * const sharedBus,CS4223::Protocol::Type protocol_type,unsigned int cache_size,unsigned short assoc, unsigned int blk_size)
-			:_instructions(instructions),_instruction_count(instruction_count),_sharedBus(sharedBus)
+		Core::Core(vector<CS4223::Processor::Instruction*> *instructions,const unsigned short proc_id,const unsigned int instruction_count,Bus * const sharedBus,CS4223::Protocol::Type protocol_type,unsigned int cache_size,unsigned short assoc, unsigned int blk_size)
+			:_instructions(instructions),_proc_id(proc_id),_instruction_count(instruction_count),_sharedBus(sharedBus)
 		{
 			// Create a new processor with cache
 			this->_data_ref_count = instructions->size();
@@ -15,13 +15,13 @@ namespace CS4223{
 			this->_L1_cache = new Cache(this->_sharedBus,cache_size,assoc,blk_size);
 
 			if(protocol_type==Protocol::MESI){
-				this->_protocol = new CS4223::Protocols::MESI(this->_L1_cache,this->_sharedBus);
+				this->_protocol = new CS4223::Protocols::MESI(this->_proc_id,this->_L1_cache,this->_sharedBus);
 				this->_sharedBus->set_bytes_per_transaction(4,blk_size,blk_size,blk_size,0);
 			}else if(protocol_type==Protocol::DRAGON){
-				this->_protocol = new CS4223::Protocols::DRAGON(this->_L1_cache,this->_sharedBus);
+				this->_protocol = new CS4223::Protocols::DRAGON(this->_proc_id,this->_L1_cache,this->_sharedBus);
 				this->_sharedBus->set_bytes_per_transaction(4,blk_size,blk_size,blk_size,2);  //Only one word size per transaction
 			}else if(protocol_type==Protocol::NONE){
-				this->_protocol = new CS4223::Protocols::BASIC(this->_L1_cache,this->_sharedBus);
+				this->_protocol = new CS4223::Protocols::BASIC(this->_proc_id,this->_L1_cache,this->_sharedBus);
 				this->_sharedBus->set_bytes_per_transaction(4,blk_size,blk_size,blk_size,0);
 			}
 

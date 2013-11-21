@@ -18,7 +18,7 @@ namespace CS4223{
 			private:
 				CS4223::Processor::Cache *_cache;
 				CS4223::Bus *_sharedBus;
-
+				unsigned short _proc_id;
 				class State{
 					private:
 						bool Valid;
@@ -44,7 +44,7 @@ namespace CS4223{
 
 				vector<vector<State>> *_cache_state;
 			public:
-				BASIC(CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus);
+				BASIC(const unsigned short proc_id,CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus);
 				~BASIC();
 				void ProRd(string address,unsigned int *wait_cycle);
 				void ProWr(string address,unsigned int *wait_cycle);

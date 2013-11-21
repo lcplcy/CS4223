@@ -15,6 +15,7 @@ namespace CS4223{
 			private:
 				CS4223::Processor::Cache *_cache;
 				CS4223::Bus *_sharedBus;
+				unsigned short _proc_id;
 				class State{
 					private:
 						string Dragon_State;
@@ -32,7 +33,7 @@ namespace CS4223{
 
 				vector<vector<State>> *_cache_state;
 			public:
-				DRAGON(CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus);
+				DRAGON(const unsigned short proc_id,CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus);
 				~DRAGON();
 				void ProRd(string address,unsigned int *wait_cycle);
 				void ProWr(string address,unsigned int *wait_cycle);

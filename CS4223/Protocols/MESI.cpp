@@ -4,8 +4,8 @@
 namespace CS4223{
 	namespace Protocols{
 		
-		MESI::MESI(CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus)			
-		:_cache(cache),_sharedBus(sharedBus){
+		MESI::MESI(const unsigned short proc_id,CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus)			
+			:_proc_id(proc_id),_cache(cache),_sharedBus(sharedBus){
 			
 		}
 

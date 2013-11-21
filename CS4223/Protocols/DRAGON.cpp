@@ -2,7 +2,12 @@
 
 namespace CS4223{
 	namespace Protocols{
-		DRAGON::DRAGON(CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus){
+
+		
+		DRAGON::DRAGON(const unsigned short proc_id,CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus)
+			:_proc_id(proc_id)
+		{
+
 		}
 
 		DRAGON::~DRAGON(){
@@ -14,7 +19,7 @@ namespace CS4223{
 		//From bus, if no other cache has it,
 		//State: M
 
-		//In M, if this cache's processor Write, stay in M
+		
 		
 
 		//From this cache's processor, if Write Miss,
@@ -24,20 +29,19 @@ namespace CS4223{
 		//Only this cache can be Sm
 
 		
-		//In Sm, if this cache's processor Write, and change other Sm to Sc
-		//In Sm, if this cache's processor Write, and no other cache has it, NewState = M
+		
 		//In Sm, if another cache do a BusUpdate, NewState = Sc
 
 		
 
 		
-		//In E, if this cache's processor Write, NewState = M
+		
 		
 
 		
 
 		
-		//In Sc, if this cache's processor Write, NewState = Sm, Do bus update to change other Sm to Sc.
+		
 		//In Sc, if this cache's processor Write, and after bus update realise that no other cache has it, NewState = M
 		
 		//In Sc, if another cache does a BusUpdate, remain in Sc
@@ -56,11 +60,6 @@ namespace CS4223{
 
 			//Cache will return hit or miss
 			for(unsigned int sets=0;sets<cacheSet->size();sets++){
-				//Cache Hit
-				//In Sc, if this cache's processor Read stay in Sc
-				//In E, if this cache's processor Read, stay in E
-				//In Sm, if this cache's processor Read, stay in Sm
-				//In M, if this cache's processor Read, stay in M
 				if(translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="M"
 					|| translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="E"
 					|| translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="Sc"
@@ -70,10 +69,14 @@ namespace CS4223{
 					break;
 				}
 			}
-			//}
 
 			
 			if(!miss){
+				//Cache Hit
+				//In Sc, if this cache's processor Read stay in Sc
+				//In E, if this cache's processor Read, stay in E
+				//In Sm, if this cache's processor Read, stay in Sm
+				//In M, if this cache's processor Read, stay in M
 				this->_cache->inc_hit();
 				*wait_cycle+=1;
 				//No change in DRAGON STATE.
@@ -82,20 +85,82 @@ namespace CS4223{
 				//Check if other cache's have it via bus, if not fetch from memory
 				
 				//Send a bus read to request from other caches or memory
-				CS4223::Processor::Transaction new_transaction(CS4223::Processor::Transaction::BusRd, address);
-				this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
+				CS4223::Processor::Transaction newtrans = CS4223::Processor::Transaction(this->_proc_id,CS4223::Processor::Transaction::BusRd, address);
+				this->_sharedBus->add_transaction(Bus::Type::BusRd,newtrans);
 				*wait_cycle+=1;
 			}
 		}
 
 
 		void DRAGON::ProWr(string address,unsigned int *wait_cycle){
+			bool miss = true;
+			int getSet;
+			this->_cache->inc_cache_access();
 
+			//Extract block identifier
+			Processor::Cache::Address translated_address = this->_cache->translate_address(address);
+			vector<Processor::Block> *cacheSet = this->_cache->get_cache_set((unsigned int)translated_address.cache_set_idx);
+			vector<State> *cacheStateSet = &this->_cache_state->at((unsigned int)translated_address.cache_set_idx);
 
+			//Cache will return hit or miss
+			for(unsigned int sets=0;sets<cacheSet->size();sets++){
+
+				if(translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="M"
+					|| translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="E"
+					|| translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="Sc"
+					|| translated_address.tag==cacheSet->at(sets).get_tag()&&cacheStateSet->at(sets).get_dragonstate()=="Sm"){
+					//A Hit
+					getSet = sets;
+					miss=false;
+					break;
+				}	
+			}
+			if(!miss){
+				//Cache Hit
+				DRAGON::State *selectedState = &cacheStateSet->at(getSet);
+				//In Sc, if this cache's processor Write, NewState = Sm, Do bus update to change other Sm to Sc.
+				if(selectedState->get_dragonstate()=="Sc"){
+					selectedState->set_dragonstate("Sm");
+					this->_cache->inc_hit();
+					*wait_cycle+=1;
+				}
+				//In E, if this cache's processor Write, NewState = M
+				else if(selectedState->get_dragonstate()=="E"){
+					selectedState->set_dragonstate("M");
+					this->_cache->inc_hit();
+					*wait_cycle+=1;
+				}
+				//In M, if this cache's processor Write, stay in M
+				else if(selectedState->get_dragonstate()=="M"){
+					selectedState->set_dragonstate("M");
+					this->_cache->inc_hit();
+					*wait_cycle+=1;
+				}
+				//In Sm, if this cache's processor Write, and change other Sm to Sc
+				//In Sm, if this cache's processor Write, and no other cache has it, NewState = M
+				else if(selectedState->get_dragonstate()=="Sm"){
+					CS4223::Processor::Transaction newtrans = CS4223::Processor::Transaction(this->_proc_id,CS4223::Processor::Transaction::BusUp, address);
+					this->_sharedBus->add_transaction(Bus::Type::BusUp,newtrans);
+					*wait_cycle+=1;
+					this->_cache->inc_hit();
+				}
+				
+			}
+			
 		}
 
+
 		void DRAGON::Snoop(string address,unsigned int *wait_cycle){
-			if(this->_sharedBus->next_transaction()->get_type() == Bus::Type::BusRd && this->_sharedBus->S == true){
+			//BusUpdate and another cache editing my stuff
+			if(this->_sharedBus->next_transaction()->get_type() == Bus::Type::BusUp 
+				&& this->_sharedBus->next_transaction()->get_proc_id != this->_proc_id)
+			{
+
+			}
+			//BusRead and another cache has asserted that he has my stuff
+			else if(this->_sharedBus->next_transaction()->get_type() == Bus::Type::BusRd 
+				&& this->_sharedBus->read_shared_line() == true 
+				&& this->_sharedBus->next_transaction()->get_proc_id == this->_proc_id){
 				//Extract block identifier
 				Processor::Cache::Address translated_address = this->_cache->translate_address(address);
 				vector<Processor::Block> *cacheSet = this->_cache->get_cache_set((unsigned int)translated_address.cache_set_idx);
@@ -115,7 +180,10 @@ namespace CS4223{
 				selectedState->set_dragonstate("Sc");
 				this->_sharedBus->unset_shared_line();
 			}
-			if(this->_sharedBus->next_transaction()->get_type() == Bus::Type::BusRd && this->_sharedBus->S == false){
+			//BusRead and another cache wants my stuff
+			else if(this->_sharedBus->next_transaction()->get_type() == Bus::Type::BusRd 
+				&& this->_sharedBus->read_shared_line() == false 
+				&& this->_sharedBus->next_transaction()->get_proc_id != this->_proc_id){
 				bool miss = true;
 				this->_cache->inc_cache_access();
 
@@ -141,29 +209,52 @@ namespace CS4223{
 				if(!miss){
 				//Assert shared line if I have the data
 					this->_sharedBus->set_shared_line();
-
-					CS4223::Processor::Transaction new_transaction(CS4223::Processor::Transaction::Type::BusRd, address);
-					this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
+					//CS4223::Processor::Transaction new_transaction(CS4223::Processor::Transaction::Type::BusRd, address);
+					//this->_sharedBus->add_transaction(Bus::Type::BusRd,new_transaction);
 					DRAGON::State *selectedState = &cacheStateSet->at(getSet);
 					//In E, if another cache request via BusRd, NewState = Sc
 					if(selectedState->get_dragonstate()=="E")
 						selectedState->set_dragonstate("Sc");
 					//In M, if another cache request via BusRd, do a flush and change to Sm
-					if(selectedState->get_dragonstate()=="M"){
+					else if(selectedState->get_dragonstate()=="M"){
 						this->_cache->flush();
 						selectedState->set_dragonstate("Sc");
 					}
 					//In Sm, if another cache request via BusRd, do a flush and remain in Sm
-					if(selectedState->get_dragonstate()=="Sm"){
+					else if(selectedState->get_dragonstate()=="Sm"){
 						this->_cache->flush();
 						selectedState->set_dragonstate("Sm");
 					}
 					//In Sc, if another cache request via BusRd, remain in Sc
-					if(selectedState->get_dragonstate()=="Sc"){
+					else if(selectedState->get_dragonstate()=="Sc"){
 						selectedState->set_dragonstate("Sc");
 					}
 				}
-			}	
+			}
+			//BusRead and no other cache has my stuff
+			else if(this->_sharedBus->next_transaction()->get_type() == Bus::Type::BusRd
+				&& this->_sharedBus->read_shared_line() == false 
+				&& this->_sharedBus->next_transaction()->get_proc_id != this->_proc_id){
+				
+					//Miss => access memory add 10 to processor cycle
+					*wait_cycle+=10;
+					//Extract block identifier
+					Processor::Cache::Address translated_address = this->_cache->translate_address(address);
+					vector<Processor::Block> *cacheSet = this->_cache->get_cache_set((unsigned int)translated_address.cache_set_idx);
+					vector<State> *cacheStateSet = &this->_cache_state->at((unsigned int)translated_address.cache_set_idx);
+				
+					//Random Replacement at the cache set
+					unsigned int random_blk_idx = rand()%cacheSet->size()+0;
+					Processor::Block *selectedBlk = &cacheSet->at(random_blk_idx);
+					DRAGON::State *selectedState = &cacheStateSet->at(random_blk_idx);
+					
+					//From this cache's processor, if Read Miss,
+					//From bus, if no other cache has it,
+					//State: E
+					selectedBlk->set_tag(translated_address.tag);
+					selectedState->set_dragonstate("E");
+					this->_sharedBus->unset_shared_line();
+			}
 		}
 	}
 }
