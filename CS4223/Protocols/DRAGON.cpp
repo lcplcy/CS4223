@@ -17,6 +17,7 @@ namespace CS4223{
 
 
 		void DRAGON::ProRd(string address,unsigned int *wait_cycle){
+			this ->prev_step = "R";
 			bool miss = true;
 			this->_cache->inc_cache_access();
 			
@@ -60,6 +61,7 @@ namespace CS4223{
 
 		
 		void DRAGON::ProWr(string address,unsigned int *wait_cycle){
+			this ->prev_step = "W";
 			bool miss = true;
 			int getSet;
 			this->_cache->inc_cache_access();
@@ -130,11 +132,7 @@ namespace CS4223{
 		//From bus, if no other cache has it,
 		//State: M
 
-		//From this cache's processor, if Write Miss,
-		//From bus, other cache has it,
-		//State: Sm
-		//Do BusUpdate to all other cache, change other Sm to Sc
-		//Only this cache can be Sm
+		
 		//===CY DRAGON TODO===
 
 		void DRAGON::listen(string address,unsigned int *wait_cycle){
@@ -216,15 +214,29 @@ namespace CS4223{
 				unsigned int random_blk_idx = rand()%cacheSet->size()+0;
 				Processor::Block *selectedBlk = &cacheSet->at(random_blk_idx);
 				DRAGON::State *selectedState = &cacheStateSet->at(random_blk_idx);
-
-				//From this cache's processor, if Read Miss,
-				//From bus, other cache has it,
-				//State: Sc
-				//Other cache's have the memory requested, take from them instead.
-				*wait_cycle+=1;
-				selectedBlk->set_tag(translated_address.tag);
-				selectedState->set_dragonstate("Sc");
-				this->_sharedBus->unset_shared_line();
+				if(this->prev_step == "R"){
+					//From this cache's processor, if Read Miss,
+					//From bus, other cache has it,
+					//State: Sc
+					//Other cache's have the memory requested, take from them instead.
+					*wait_cycle+=1;
+					selectedBlk->set_tag(translated_address.tag);
+					selectedState->set_dragonstate("Sc");
+					this->_sharedBus->unset_shared_line();
+				}else if(this->prev_step == "W"){
+					//From this cache's processor, if Write Miss,
+					//From bus, other cache has it,
+					//State: Sm
+					//Do BusUpdate to all other cache, change other Sm to Sc
+					//Only this cache can be Sm
+					*wait_cycle+=1;
+					selectedBlk->set_tag(translated_address.tag);
+					selectedState->set_dragonstate("Sm");
+					CS4223::Processor::Transaction newtrans = CS4223::Processor::Transaction(this->_proc_id,CS4223::Processor::Transaction::BusUp, address);
+					this->_sharedBus->add_transaction(Bus::Type::BusUp,newtrans);
+					this->_sharedBus->unset_shared_line();
+				
+				}
 			}
 			//BusRead and another cache wants my stuff
 			else if(this->_sharedBus->next_transaction()->get_type() == Bus::Type::BusRd 
@@ -294,12 +306,18 @@ namespace CS4223{
 					Processor::Block *selectedBlk = &cacheSet->at(random_blk_idx);
 					DRAGON::State *selectedState = &cacheStateSet->at(random_blk_idx);
 					
-					//From this cache's processor, if Read Miss,
-					//From bus, if no other cache has it,
-					//State: E
-					selectedBlk->set_tag(translated_address.tag);
-					selectedState->set_dragonstate("E");
-					this->_sharedBus->unset_shared_line();
+					if(this->prev_step=="R"){
+						//From this cache's processor, if Read Miss,
+						//From bus, if no other cache has it,
+						//State: E
+						selectedBlk->set_tag(translated_address.tag);
+						selectedState->set_dragonstate("E");
+						this->_sharedBus->unset_shared_line();
+					}else if(this->prev_step=="W"){
+						selectedBlk->set_tag(translated_address.tag);
+						selectedState->set_dragonstate("M");
+						this->_sharedBus->unset_shared_line();
+					}
 			}
 		}
 	}

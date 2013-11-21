@@ -11,10 +11,10 @@ namespace CS4223{
 
 		if(arg_count<3){
 
-			raw_protocol_type = "NONE";
-			this->num_of_processors = 1;
-			this->trace_file_name = "WEATHER";
-			//this->num_of_processors = 4;
+			//raw_protocol_type = "NONE";
+			//this->num_of_processors = 1;
+			//this->trace_file_name = "WEATHER";
+			this->num_of_processors = 4;
 			this->cache_size = 4096;
 			this->associativity = 1;
 			this->block_size = 64;
