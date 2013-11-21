@@ -125,6 +125,7 @@ namespace CS4223{
 		}
 
 		void Core::listen(string address){
+			//this->_protocol->Snoop(address,&this->_wait_cycle);
 
 		}
 

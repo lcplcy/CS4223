@@ -5,8 +5,10 @@ namespace CS4223{
 
 		
 		DRAGON::DRAGON(const unsigned short proc_id,CS4223::Processor::Cache *cache, CS4223::Bus *sharedBus)
-			:_proc_id(proc_id)
+			:_proc_id(proc_id),_cache(cache),_sharedBus(sharedBus)
 		{
+			vector<State> cache_set(this->_cache->get_associativity(),State());
+			this->_cache_state = new vector<vector<State>>(this->_cache->get_num_of_cache_sets(),cache_set);
 
 		}
 
@@ -127,15 +129,7 @@ namespace CS4223{
 			
 		}
 
-		//===CY DRAGON TODO===
-		//From this cache's processor, if Write Miss,
-		//From bus, if no other cache has it,
-		//State: M
-
-		
-		//===CY DRAGON TODO===
-
-		void DRAGON::listen(string address,unsigned int *wait_cycle){
+		void DRAGON::Snoop(string address,unsigned int *wait_cycle){
 			//BusUpdate and no other cache has my stuff
 			if(this->_sharedBus->next_transaction()->get_type() == Bus::Type::BusUp 
 				&& this->_sharedBus->next_transaction()->get_proc_id() == this->_proc_id
@@ -314,6 +308,9 @@ namespace CS4223{
 						selectedState->set_dragonstate("E");
 						this->_sharedBus->unset_shared_line();
 					}else if(this->prev_step=="W"){
+						//From this cache's processor, if Write Miss,
+						//From bus, if no other cache has it,
+						//State: M
 						selectedBlk->set_tag(translated_address.tag);
 						selectedState->set_dragonstate("M");
 						this->_sharedBus->unset_shared_line();
